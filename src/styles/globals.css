@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 255 255 255 /* white */
+    --foreground: 0 0 0; /* black */
+    --primary: 59 130 246; /* blue-500 */
+    --secondary: 156 163 175; /* gray-400 */
+    --accent: 249 168 212; /* pink-300 */
+    --muted: 229 231 235; /* gray-200 */
+    --destructive: 239 68 68; /* red-500 */
+  }
+
+  .dark {
+    --background: 23 23 23; /* dark gray */
+    --foreground: 255 255 255; /* white */
+    --primary: 96 165 250; /* blue-400 */
+    --secondary: 107 114 128; /* gray-500 */
+    --accent: 236 72 153; /* pink-500 */
+    --muted: 75 85 99; /* gray-600 */
+    --destructive: 248 113 113; /* red-400 */
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-[rgb(var(--background))] text-[rgb(var(--foreground))];
+  }
+}
