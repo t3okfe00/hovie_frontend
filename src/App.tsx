@@ -1,7 +1,11 @@
+import { Button } from "@/components/ui/button";
+
 function App() {
   return (
     <>
-      <div className="bg-[rgb(var(--primary))]">Button</div>
+      <Button variant="destructive" size="lg">
+        Click me
+      </Button>
     </>
   );
 }
