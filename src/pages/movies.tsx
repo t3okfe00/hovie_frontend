@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Genre, Movie } from "@/types";
+import { sortMovies, genreMap } from "@/lib/utils";
 
 import {
   Select,
@@ -27,6 +28,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 const BASE_URL = "http://localhost:3000/movie";
 
 export function MoviesPage() {
+  const [searchResults, setSearchResults] = useState<Movie[]>([]); // New state for search results
+
   const [search, setSearch] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [yearRange, setYearRange] = useState([1990, 2024]);
@@ -55,56 +58,16 @@ export function MoviesPage() {
   } = useQuery({
     queryKey: ["movies"],
     queryFn: async () => {
-      const response = await fetch(`${BASE_URL}/popular?page=3&language=en-US`);
+      const response = await fetch(
+        `${BASE_URL}/popular?page=17&language=en-US`
+      );
       if (!response.ok) throw new Error("Failed to fetch movies");
       const data = await response.json();
       console.log("Movie Data", movies);
 
-      return data;
+      return data.results;
     },
   });
-  const sortMovies = (selectedSort: string) => {
-    return (a: Movie, b: Movie) => {
-      if (selectedSort === "popularity") {
-        return b.popularity - a.popularity;
-      }
-      if (selectedSort === "rating") {
-        return b.vote_average - a.vote_average;
-      }
-      if (selectedSort === "release") {
-        return (
-          new Date(b.release_date).getTime() -
-          new Date(a.release_date).getTime()
-        );
-      }
-      if (selectedSort === "title") {
-        return a.title.localeCompare(b.title);
-      }
-      return 0;
-    };
-  };
-
-  const genreMap = {
-    28: "Action",
-    12: "Adventure",
-    16: "Animation",
-    35: "Comedy",
-    80: "Crime",
-    99: "Documentary",
-    18: "Drama",
-    10751: "Family",
-    14: "Fantasy",
-    36: "History",
-    27: "Horror",
-    10402: "Music",
-    9648: "Mystery",
-    10749: "Romance",
-    878: "Science Fiction",
-    10770: "TV Movie",
-    53: "Thriller",
-    10752: "War",
-    37: "Western",
-  };
 
   const resetFilters = () => {
     setSearch("");
@@ -112,21 +75,31 @@ export function MoviesPage() {
     setYearRange([1990, 2024]);
     setRatingRange([0, 10]);
     setSelectedSort("popularity");
+    setSearchResults([]); // Clear search results when resetting filters
   };
 
-  console.log("BEFORE FILTER", movies);
-  const filteredMovies = movies
-    ? movies?.results
-        ?.filter((movie: Movie) => {
-          console.log("Movie Title", movie.title);
+  const handleSearchClick = async (e: React.MouseEvent) => {
+    // You can add any logic here if needed, like clearing previous results
+    // or fetching the new set of movies based on the search term.
+
+    const response = await fetch(`${BASE_URL}/search?query=${search}`);
+    if (!response.ok) throw new Error("Failed to fetch movies");
+    const data = await response.json();
+    setSearchResults(data.results);
+    console.log("Search Data", data);
+  };
+
+  const moviesToDisplay = searchResults.length > 0 ? searchResults : movies;
+
+  const filteredMovies = moviesToDisplay
+    ? moviesToDisplay
+        .filter((movie: Movie) => {
           const matchesSearch = movie.title
             .toLowerCase()
             .includes(search.toLowerCase());
           const matchesGenres =
             selectedGenres.length === 0 ||
-            selectedGenres.some(
-              (genreId) => movie.genre_ids.includes(genreId) // Check if movie has one of the selected genre IDs
-            );
+            selectedGenres.some((genreId) => movie.genre_ids.includes(genreId));
           const matchesYear =
             parseInt(movie.release_date) >= yearRange[0] &&
             parseInt(movie.release_date) <= yearRange[1];
@@ -157,6 +130,10 @@ export function MoviesPage() {
                   className="pl-10"
                 />
               </div>
+
+              <Button variant="outline" onClick={handleSearchClick}>
+                Search
+              </Button>
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" className="gap-2">
