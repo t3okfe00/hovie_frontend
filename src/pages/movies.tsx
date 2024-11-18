@@ -28,7 +28,7 @@ const BASE_URL = "http://localhost:3000/movie";
 
 export function MoviesPage() {
   const [search, setSearch] = useState("");
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [yearRange, setYearRange] = useState([1990, 2024]);
   const [ratingRange, setRatingRange] = useState([0, 10]);
   const [selectedSort, setSelectedSort] = useState("popularity"); // Default sort option
@@ -124,10 +124,8 @@ export function MoviesPage() {
             .includes(search.toLowerCase());
           const matchesGenres =
             selectedGenres.length === 0 ||
-            selectedGenres.some((genre) =>
-              movie.genre_ids.includes(
-                genres.genres.find((g) => g.name === genre)?.id
-              )
+            selectedGenres.some(
+              (genreId) => movie.genre_ids.includes(genreId) // Check if movie has one of the selected genre IDs
             );
           const matchesYear =
             parseInt(movie.release_date) >= yearRange[0] &&
@@ -189,15 +187,15 @@ export function MoviesPage() {
                                 className="flex items-center gap-2"
                                 onClick={() => {
                                   setSelectedGenres((prev) =>
-                                    prev.includes(genre.name)
-                                      ? prev.filter((g) => g !== genre.name)
-                                      : [...prev, genre.name]
+                                    prev.includes(genre.id)
+                                      ? prev.filter((g) => g !== genre.id)
+                                      : [...prev, genre.id]
                                   );
                                 }}
                               >
                                 <Badge
                                   variant={
-                                    selectedGenres.includes(genre.name)
+                                    selectedGenres.includes(genre.id)
                                       ? "default"
                                       : "outline"
                                   }
