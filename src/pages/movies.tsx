@@ -244,6 +244,12 @@ export function MoviesPage() {
                 </SheetContent>
               </Sheet>
             </div>
+            {!isSearchMode && filteredMovies.length != 0 && (
+              <h1 className="text-2xl font-bold text-orange-500 mb-6">
+                Popular Movies
+              </h1>
+            )}
+
             {isMoviesLoading ? (
               <h1>Loading</h1>
             ) : (
