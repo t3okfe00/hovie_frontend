@@ -37,7 +37,7 @@ export function GroupCard({ name, members, description, category, imageUrl }: Gr
             <CardContent className="flex flex-col justify-between flex-1">
                 <CardDescription className="line-clamp-2 mb-4">{description}</CardDescription>
                 <Button className="w-full mt-auto" variant="secondary">
-                    View Group
+                    Request to Join
                 </Button>
             </CardContent>
         </Card>

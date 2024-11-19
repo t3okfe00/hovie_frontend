@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Settings } from 'lucide-react';
@@ -19,6 +20,12 @@ interface YourGroupCardProps {
 }
 
 export function YourGroupCard({ name, members, description, category, imageUrl, isOwner }: YourGroupCardProps) {
+    const navigate = useNavigate();
+
+    const handleViewGroup = () => {
+        navigate('/groupPage');
+    };
+
     return (
         <Card className="overflow-hidden transition-all hover:shadow-lg border-border/40 flex flex-col justify-between">
             <div className="relative h-40 overflow-hidden">
@@ -63,7 +70,7 @@ export function YourGroupCard({ name, members, description, category, imageUrl, 
             </CardHeader>
             <CardContent className="flex flex-col justify-between flex-1">
                 <CardDescription className="line-clamp-2 mb-4">{description}</CardDescription>
-                <Button className="w-full mt-auto" variant="secondary">
+                <Button className="w-full mt-auto" variant="secondary" onClick={handleViewGroup}>
                     View Group
                 </Button>
             </CardContent>
