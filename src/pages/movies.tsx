@@ -38,7 +38,7 @@ export function MoviesPage() {
 
   const [search, setSearch] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
-  const [yearRange, setYearRange] = useState([1990, 2024]);
+  const [yearRange, setYearRange] = useState([1900, 2024]);
   const [ratingRange, setRatingRange] = useState([0, 10]);
   const [selectedSort, setSelectedSort] = useState(""); // Default sort option
 
