@@ -71,7 +71,7 @@ export type Movie = {
   genres: Genre[];
   runtime: number; // in minutes
   tagline: string;
-  posterPath: string; // Image path, to be used with TMDB base URL
+  poster_path: string; // Image path, to be used with TMDB base URL
   backdropPath: string; // Image path, to be used with TMDB base URL
   vote_average: number; // Rating out of 10
   voteCount: number;

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Genre, Movie } from "@/types";
 import { sortMovies, genreMap } from "@/lib/utils";
+import ReactPaginate from "react-paginate";
 
 import {
   Select,
@@ -24,17 +25,22 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { set } from "date-fns";
 
 const BASE_URL = "http://localhost:3000/movie";
 
 export function MoviesPage() {
+  const [page, setPage] = useState<number>(1); // New state for pagination
+  const [pageCount, setPageCount] = useState<number>(0); // New state for pagination
+  const [isSearchMode, setIsSearchMode] = useState(false); // Tracks if search is active
+
   const [searchResults, setSearchResults] = useState<Movie[]>([]); // New state for search results
 
   const [search, setSearch] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [yearRange, setYearRange] = useState([1990, 2024]);
   const [ratingRange, setRatingRange] = useState([0, 10]);
-  const [selectedSort, setSelectedSort] = useState("popularity"); // Default sort option
+  const [selectedSort, setSelectedSort] = useState(""); // Default sort option
 
   const {
     data: genres,
@@ -56,14 +62,18 @@ export function MoviesPage() {
     isError: isMoviesError,
     isLoading: isMoviesLoading,
   } = useQuery({
-    queryKey: ["movies"],
+    queryKey: ["movies", isSearchMode, page],
     queryFn: async () => {
-      const response = await fetch(
-        `${BASE_URL}/popular?page=17&language=en-US`
-      );
+      const endpoint = isSearchMode
+        ? `${BASE_URL}/search?query=${search}&language=en-US&page=${page}` // Search API
+        : `${BASE_URL}/popular?page=${page}&language=en-US`; // Popular movies API
+      const response = await fetch(endpoint);
+      console.log("Fetching page", page);
       if (!response.ok) throw new Error("Failed to fetch movies");
       const data = await response.json();
-      console.log("Movie Data", movies);
+      console.log("Fetching data in movies use Query!", data.results);
+
+      setPageCount(data.total_pages);
 
       return data.results;
     },
@@ -71,22 +81,21 @@ export function MoviesPage() {
 
   const resetFilters = () => {
     setSearch("");
+    setIsSearchMode(false); // Switch back to popular movies
+
     setSelectedGenres([]);
-    setYearRange([1990, 2024]);
+    setYearRange([1900, 2024]);
     setRatingRange([0, 10]);
     setSelectedSort("popularity");
     setSearchResults([]); // Clear search results when resetting filters
   };
 
   const handleSearchClick = async (e: React.MouseEvent) => {
-    // You can add any logic here if needed, like clearing previous results
-    // or fetching the new set of movies based on the search term.
+    console.log("Search Clicked");
+    e.preventDefault();
+    setIsSearchMode(true); // Enable search mode
 
-    const response = await fetch(`${BASE_URL}/search?query=${search}`);
-    if (!response.ok) throw new Error("Failed to fetch movies");
-    const data = await response.json();
-    setSearchResults(data.results);
-    console.log("Search Data", data);
+    setPage(1); // Reset to the first page of search results
   };
 
   const moviesToDisplay = searchResults.length > 0 ? searchResults : movies;
@@ -239,11 +248,15 @@ export function MoviesPage() {
               <h1>Loading</h1>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {filteredMovies.map((movie: Movie, index: number) => (
-                  <div key={index} className="space-y-2">
+                {filteredMovies.map((movie: Movie) => (
+                  <div key={movie.id} className="space-y-2">
                     <div className="aspect-[2/3] overflow-hidden rounded-lg">
                       <img
-                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                        src={
+                          movie.poster_path
+                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                            : "https://via.placeholder.com/500x750?text=No+Image"
+                        }
                         alt={movie.title}
                         className="w-full h-full object-cover transition-transform hover:scale-105"
                       />
@@ -273,6 +286,25 @@ export function MoviesPage() {
                 ))}
               </div>
             )}
+            <ReactPaginate
+              className="flex justify-center mt-8 space-x-2"
+              breakLabel="..."
+              nextLabel="next >"
+              onPageChange={(selectedItem) =>
+                setPage(selectedItem.selected + 1)
+              }
+              pageRangeDisplayed={5}
+              pageCount={pageCount}
+              previousLabel="< previous"
+              renderOnZeroPageCount={null}
+              containerClassName="flex items-center space-x-2"
+              pageClassName="px-3 py-1 border rounded hover:bg-gray-200"
+              activeClassName="bg-blue-500 text-white"
+              previousClassName="px-3 py-1 border rounded hover:bg-gray-200"
+              nextClassName="px-3 py-1 border rounded hover:bg-gray-200"
+              breakClassName="px-3 py-1"
+              forcePage={page - 1}
+            />
           </div>
         </div>
       )}
