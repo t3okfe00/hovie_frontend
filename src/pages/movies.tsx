@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,6 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { set } from "date-fns";
 
 const BASE_URL = "http://localhost:3000/movie";
 
@@ -35,6 +33,8 @@ export function MoviesPage() {
   const [isSearchMode, setIsSearchMode] = useState(false); // Tracks if search is active
 
   const [searchResults, setSearchResults] = useState<Movie[]>([]); // New state for search results
+
+  const [tempSearch, setTempSearch] = useState("");
 
   const [search, setSearch] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
@@ -55,6 +55,7 @@ export function MoviesPage() {
 
       return data;
     },
+    staleTime: 1000 * 60 * 20, // 5 minutes
   });
 
   const {
@@ -62,7 +63,7 @@ export function MoviesPage() {
     isError: isMoviesError,
     isLoading: isMoviesLoading,
   } = useQuery({
-    queryKey: ["movies", isSearchMode, page],
+    queryKey: ["movies", isSearchMode, page, search],
     queryFn: async () => {
       const endpoint = isSearchMode
         ? `${BASE_URL}/search?query=${search}&language=en-US&page=${page}` // Search API
@@ -73,10 +74,14 @@ export function MoviesPage() {
       const data = await response.json();
       console.log("Fetching data in movies use Query!", data.results);
 
-      setPageCount(data.total_pages);
+      setPageCount(data?.total_pages);
 
-      return data.results;
+      return {
+        results: data.results,
+        totalPages: data.total_pages, // Include total_pages in the return
+      };
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   const resetFilters = () => {
@@ -93,19 +98,18 @@ export function MoviesPage() {
   const handleSearchClick = async (e: React.MouseEvent) => {
     console.log("Search Clicked");
     e.preventDefault();
+    setSearch(tempSearch);
     setIsSearchMode(true); // Enable search mode
 
     setPage(1); // Reset to the first page of search results
   };
 
-  const moviesToDisplay = searchResults.length > 0 ? searchResults : movies;
+  const { results, totalPages } = movies || {};
+  const moviesToDisplay = searchResults.length > 0 ? searchResults : results;
 
   const filteredMovies = moviesToDisplay
     ? moviesToDisplay
         .filter((movie: Movie) => {
-          const matchesSearch = movie.title
-            .toLowerCase()
-            .includes(search.toLowerCase());
           const matchesGenres =
             selectedGenres.length === 0 ||
             selectedGenres.some((genreId) => movie.genre_ids.includes(genreId));
@@ -116,7 +120,7 @@ export function MoviesPage() {
             movie.vote_average >= ratingRange[0] &&
             movie.vote_average <= ratingRange[1];
 
-          return matchesSearch && matchesGenres && matchesYear && matchesRating;
+          return matchesGenres && matchesYear && matchesRating;
         })
         .sort(sortMovies(selectedSort)) // Apply sorting based on selectedSort
     : [];
@@ -134,8 +138,8 @@ export function MoviesPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   placeholder="Search movies..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  value={tempSearch} // Controlled by local state
+                  onChange={(e) => setTempSearch(e.target.value)} // Update local state
                   className="pl-10"
                 />
               </div>
@@ -269,7 +273,9 @@ export function MoviesPage() {
                     </div>
 
                     <div>
-                      <h3 className="font-medium truncate">{movie.title}</h3>
+                      <h3 className="font-medium truncate">
+                        {movie.title || "SOMETHING"}
+                      </h3>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <span>
                           {new Date(movie.release_date).getFullYear()}
@@ -300,7 +306,7 @@ export function MoviesPage() {
                 setPage(selectedItem.selected + 1)
               }
               pageRangeDisplayed={5}
-              pageCount={pageCount}
+              pageCount={totalPages}
               previousLabel="< previous"
               renderOnZeroPageCount={null}
               containerClassName="flex items-center space-x-2"
