@@ -3,17 +3,11 @@ import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { Genre, Movie } from "@/types";
-import { sortMovies, genreMap } from "@/lib/utils";
-import ReactPaginate from "react-paginate";
+import { Movie } from "@/types";
+import { sortMovies } from "@/lib/utils";
+import { MoviesList } from "@/components/common/MoviesList";
+import { MoviesPagination } from "@/components/common/MoviesPagination";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -21,15 +15,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { Filters } from "@/components/common/Filters";
 const BASE_URL = "http://localhost:3000/movie";
 
 export function MoviesPage() {
   const [page, setPage] = useState<number>(1); // New state for pagination
-  const [pageCount, setPageCount] = useState<number>(0); // New state for pagination
+  const [, setPageCount] = useState<number>(0); // New state for pagination
   const [isSearchMode, setIsSearchMode] = useState(false); // Tracks if search is active
 
   const [searchResults, setSearchResults] = useState<Movie[]>([]); // New state for search results
@@ -100,6 +91,7 @@ export function MoviesPage() {
   };
 
   const handleSearchClick = async (e: React.MouseEvent) => {
+    resetFilters();
     e.preventDefault();
     setSearch(tempSearch);
     setIsSearchMode(true); // Enable search mode
@@ -131,6 +123,7 @@ export function MoviesPage() {
   return (
     <div>
       {isError && <h1>Please try again later</h1>}
+      {isMoviesError && <h1>Please try again later</h1>}
       {isLoading ? (
         <h1>Loading</h1>
       ) : (
@@ -166,88 +159,17 @@ export function MoviesPage() {
                       Reset Filters
                     </Button>
                   </div>
-
-                  <div className="py-6 space-y-6">
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Genres</h4>
-
-                      <ScrollArea className="h-[200px]">
-                        {
-                          <div className="space-y-2">
-                            {genres.genres.map((genre: Genre) => (
-                              <div
-                                key={genre.id}
-                                className="flex items-center gap-2"
-                                onClick={() => {
-                                  setSelectedGenres((prev) =>
-                                    prev.includes(genre.id)
-                                      ? prev.filter((g) => g !== genre.id)
-                                      : [...prev, genre.id]
-                                  );
-                                }}
-                              >
-                                <Badge
-                                  variant={
-                                    selectedGenres.includes(genre.id)
-                                      ? "default"
-                                      : "outline"
-                                  }
-                                  className="cursor-pointer"
-                                >
-                                  {genre.name}
-                                </Badge>
-                              </div>
-                            ))}
-                          </div>
-                        }
-                      </ScrollArea>
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Release Year</h4>
-                      <Slider
-                        min={1900}
-                        max={2024}
-                        step={1}
-                        value={yearRange}
-                        onValueChange={setYearRange}
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>{yearRange[0]}</span>
-                        <span>{yearRange[1]}</span>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Rating</h4>
-                      <Slider
-                        min={0}
-                        max={10}
-                        step={0.1}
-                        value={ratingRange}
-                        onValueChange={setRatingRange}
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>{ratingRange[0].toFixed(1)}</span>
-                        <span>{ratingRange[1].toFixed(1)}</span>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Sort By</h4>
-                      <Select
-                        value={selectedSort}
-                        onValueChange={setSelectedSort}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select sort order" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="popularity">Popularity</SelectItem>
-                          <SelectItem value="rating">Rating</SelectItem>
-                          <SelectItem value="release">Release Date</SelectItem>
-                          <SelectItem value="title">Title</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                  <Filters
+                    genres={genres}
+                    selectedGenres={selectedGenres}
+                    yearRange={yearRange}
+                    setYearRange={setYearRange}
+                    ratingRange={ratingRange}
+                    setRatingRange={setRatingRange}
+                    selectedSort={selectedSort}
+                    setSelectedGenres={setSelectedGenres}
+                    setSelectedSort={setSelectedSort}
+                  ></Filters>
                 </SheetContent>
               </Sheet>
             </div>
@@ -260,66 +182,14 @@ export function MoviesPage() {
             {isMoviesLoading ? (
               <h1>Loading</h1>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {filteredMovies.map((movie: Movie) => (
-                  <div key={movie.id} className="space-y-2">
-                    <div className="aspect-[2/3] overflow-hidden rounded-lg">
-                      <img
-                        src={
-                          movie.poster_path
-                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                            : "https://via.placeholder.com/500x750?text=No+Image"
-                        }
-                        alt={movie.title}
-                        className="w-full h-full object-cover transition-transform hover:scale-105"
-                      />
-                    </div>
-
-                    <div>
-                      <h3 className="font-medium truncate">
-                        {movie.title || "SOMETHING"}
-                      </h3>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>
-                          {new Date(movie.release_date).getFullYear()}
-                        </span>
-                        <span>★ {movie.vote_average.toFixed(1)}</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {movie.genre_ids.map((genreId) => (
-                          <Badge
-                            key={genreId}
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {genreMap[genreId] || "Unknown"}{" "}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <MoviesList movies={filteredMovies} />
             )}
-            <ReactPaginate
-              className="flex justify-center mt-8 space-x-2"
-              breakLabel="..."
-              nextLabel="next >"
-              onPageChange={(selectedItem) =>
-                setPage(selectedItem.selected + 1)
-              }
-              pageRangeDisplayed={5}
+
+            <MoviesPagination
               pageCount={totalPages}
-              previousLabel="< previous"
-              renderOnZeroPageCount={null}
-              containerClassName="flex items-center space-x-2"
-              pageClassName="px-3 py-1 border rounded hover:bg-gray-200"
-              activeClassName="bg-blue-500 text-white"
-              previousClassName="px-3 py-1 border rounded hover:bg-gray-200"
-              nextClassName="px-3 py-1 border rounded hover:bg-gray-200"
-              breakClassName="px-3 py-1"
-              forcePage={page - 1}
-            />
+              onPageChange={(newPage) => setPage(newPage.selected + 1)}
+              currentPage={page}
+            ></MoviesPagination>
           </div>
         </div>
       )}
