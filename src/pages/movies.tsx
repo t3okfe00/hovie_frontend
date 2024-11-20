@@ -69,16 +69,20 @@ export function MoviesPage() {
         ? `${BASE_URL}/search?query=${search}&language=en-US&page=${page}` // Search API
         : `${BASE_URL}/popular?page=${page}&language=en-US`; // Popular movies API
       const response = await fetch(endpoint);
-      console.log("Fetching page", page);
       if (!response.ok) throw new Error("Failed to fetch movies");
       const data = await response.json();
       console.log("Fetching data in movies use Query!", data.results);
+      console.log("Response", data);
 
-      setPageCount(data?.total_pages);
+      const normalizedTotalPages = isSearchMode
+        ? data.total_pages // Use API's total_pages for search
+        : Math.min(data.total_pages, 500); // Cap at 500 for popular movies
+
+      setPageCount(normalizedTotalPages);
 
       return {
         results: data.results,
-        totalPages: data.total_pages, // Include total_pages in the return
+        totalPages: normalizedTotalPages, // Include total_pages in the return
       };
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -96,7 +100,6 @@ export function MoviesPage() {
   };
 
   const handleSearchClick = async (e: React.MouseEvent) => {
-    console.log("Search Clicked");
     e.preventDefault();
     setSearch(tempSearch);
     setIsSearchMode(true); // Enable search mode
