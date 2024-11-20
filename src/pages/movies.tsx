@@ -42,7 +42,6 @@ export function MoviesPage() {
     queryFn: async () => {
       const response = await fetch(`${BASE_URL}/genres`);
       const data = await response.json();
-      console.log("Query function RETURN", data);
 
       return data;
     },
@@ -62,8 +61,6 @@ export function MoviesPage() {
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error("Failed to fetch movies");
       const data = await response.json();
-      console.log("Fetching data in movies use Query!", data.results);
-      console.log("Response", data);
 
       const normalizedTotalPages = isSearchMode
         ? data.total_pages // Use API's total_pages for search

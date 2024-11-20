@@ -64,7 +64,7 @@ export type JoinGroupInput = {
 export type Movie = {
   id: number;
   title: string;
-  originalTitle: string;
+  original_title: string;
   overview: string;
   release_date: string;
   genre_ids: number[];
@@ -72,11 +72,13 @@ export type Movie = {
   runtime: number; // in minutes
   tagline: string;
   poster_path: string; // Image path, to be used with TMDB base URL
-  backdropPath: string; // Image path, to be used with TMDB base URL
+  backdrop_path: string; // Image path, to be used with TMDB base URL
   vote_average: number; // Rating out of 10
   voteCount: number;
   popularity: number; // Popularity score from TMDB
   adult: boolean; // True if the movie is for adults
+  status: string;
+  imdb_id: string;
 };
 
 // Genre Type - Represents a movie genre
