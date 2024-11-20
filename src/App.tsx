@@ -4,6 +4,7 @@ import { HeroSection } from "./components/hero-section";
 import { FeatureSection } from "./components/feature-section";
 import { MovieGrid } from "./components/movie-grid";
 import { MoviesPage } from "./pages/movies";
+import { MovieDetails } from "./pages/moviedetails";
 
 function HomePage() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/movies" element={<MoviesPage />} />
+          <Route path="/movie/:id" element={<MovieDetails />}></Route>
         </Routes>
       </div>
     </Router>
