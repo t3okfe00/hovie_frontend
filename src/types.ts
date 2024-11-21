@@ -88,30 +88,41 @@ export type Genre = {
 };
 
 // Movie Credits Type - Represents the cast and crew associated with a movie
-export type MovieCredits = {
-  id: number;
-  cast: Cast[];
-  crew: Crew[];
-};
-
 // Cast Type - Represents an actor in the movie
-export type Cast = {
-  id: number;
-  name: string;
+export interface CastMember {
+  adult: boolean;
+  cast_id: number;
   character: string;
-  profilePath: string; // Image path for the actor
-  gender: number; // 1 for female, 2 for male
-  knownForDepartment: string; // e.g., acting, directing
-  order: number; // Order of appearance in the credits
-};
-
-// Crew Type - Represents the crew member (director, writer, etc.)
-export type Crew = {
+  credit_id: string;
+  gender: number | null; // Gender might be null for unknown gender
   id: number;
+  known_for_department: string;
   name: string;
+  order: number;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null; // Path might be null if no profile image is available
+}
+
+export interface CrewMember {
+  adult: boolean;
+  credit_id: string;
+  department: string;
+  gender: number | null;
+  id: number;
   job: string;
-  profilePath: string; // Image path for the crew member
-};
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+export interface MovieCredits {
+  id: number;
+  cast: CastMember[];
+  crew: CrewMember[];
+}
 
 // Movie Similar Movies Type - Represents similar movies to a given movie
 export type SimilarMovies = {

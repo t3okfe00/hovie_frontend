@@ -1,10 +1,13 @@
 import { useParams } from "react-router-dom";
 
-import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
-import { Movie } from "@/types";
+import { useMemo } from "react";
+import { CastMember, Movie, MovieCredits } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import MoviePlayer from "@/components/common/MoviePlayer";
+import MovieOverview from "@/components/common/MovieOverview";
+import MovieHeading from "@/components/common/MovieHeading";
+import { Star } from "lucide-react";
+
 import {
   Carousel,
   CarouselContent,
@@ -12,8 +15,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
+import RecommendedMovies from "@/components/common/RecommendedMovies";
 
 export function MovieDetails() {
   const { id } = useParams<{ id: string }>();
@@ -35,6 +38,7 @@ export function MovieDetails() {
       return data.results;
     },
     staleTime: 1000 * 60 * 20, // 20 minutes
+    refetchOnWindowFocus: false, // Disable refetching on window focus
   });
 
   //Query for the recommandations
@@ -51,6 +55,7 @@ export function MovieDetails() {
       return data.results;
     },
     staleTime: 1000 * 60 * 20, // 20 minutes
+    refetchOnWindowFocus: false, // Disable refetching on window focus
   });
 
   //Query for the movie
@@ -67,6 +72,24 @@ export function MovieDetails() {
       return data;
     },
     staleTime: 1000 * 60 * 20, // 20 minutes
+    refetchOnWindowFocus: false, // Disable refetching on window focus
+  });
+
+  //Query for the cast
+  const {
+    data: movieCredits,
+    isLoading: isLoadingCast,
+    isError: isErrorCast,
+  } = useQuery<MovieCredits>({
+    queryKey: ["cast", id],
+    queryFn: async () => {
+      const response = await fetch(`${BASE_URL}/${id}/credits`);
+      const data = await response.json();
+      console.log("Fetched cast data", data);
+      return data;
+    },
+    staleTime: 1000 * 60 * 20, // 20 minutes
+    refetchOnWindowFocus: false, // Disable refetching on window focus
   });
 
   const backdropPath = movie.backdrop_path;
@@ -93,24 +116,10 @@ export function MovieDetails() {
   return (
     <div className="min-h-screen bg-black p-4 sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
-          {/* Left Column */}
           <div className="space-y-6">
-            {/* Movie Title and Rating */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <h1 className="text-2xl font-bold text-orange-500 sm:text-3xl lg:text-4xl">
-                {movie.title}
-              </h1>
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 fill-orange-500 text-orange-500" />
-                <span className="text-lg font-semibold">
-                  {movie.vote_average}
-                </span>
-              </div>
-            </div>
+            <MovieHeading movie={movie} />
 
-            {/* Trailer Video Section */}
             <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-900">
               <div className="absolute inset-0 flex items-center justify-center"></div>
               <MoviePlayer
@@ -119,70 +128,32 @@ export function MovieDetails() {
               />
             </div>
 
-            {/* Overview */}
-            <div className="rounded-xl bg-gray-900/50 backdrop-blur-sm p-6 border border-gray-800/50 shadow-xl">
-              <div className="flex items-center gap-2 mb-4">
-                <h2 className="text-xl font-semibold bg-gradient-to-r text-orange-400">
-                  Overview
-                </h2>
-                <div className="flex-1 h-px bg-gradient-to-r from-orange-500/50 to-transparent"></div>
-              </div>
-
-              <p className="text-base sm:text-lg leading-relaxed text-gray-300 font-light">
-                {movie.overview}
-              </p>
-
-              <div className="mt-6 flex gap-4 items-center">
-                <div className="flex items-center text-sm text-gray-400">
-                  <span className="inline-flex items-center rounded-lg bg-gray-800 px-3 py-1">
-                    <span className="mr-2">🎭</span>
-                    {movie.genres?.map((genre, index) => (
-                      <span key={index}>
-                        {genre.name}
-                        {index < movie.genres.length - 1 && ", "}
-                      </span>
-                    ))}
-                  </span>
-                </div>
-
-                <div className="flex items-center text-sm text-gray-400">
-                  <span className="inline-flex items-center rounded-lg bg-gray-800 px-3 py-1">
-                    <span className="mr-2">⏱️</span>
-                    {movie.runtime || "120"} min
-                  </span>
-                </div>
-
-                <div className="flex items-center text-sm text-gray-400">
-                  <span className="inline-flex items-center rounded-lg bg-gray-800 px-3 py-1">
-                    <span className="mr-2">📅</span>
-                    {movie.release_date?.split("-")[0] || "2024"}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <MovieOverview movie={movie} />
 
             {/* Cast Carousel */}
             <div className="w-full">
               <h2 className="mb-4 text-lg font-semibold sm:text-xl">Cast</h2>
-              <Carousel className="w-full">
+              <Carousel>
                 <CarouselContent>
-                  {Array.from({ length: 10 }).map((_, index) => (
+                  {movieCredits?.cast?.slice(0, 10).map((actor) => (
                     <CarouselItem
-                      key={index}
-                      className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                      key={actor.id}
+                      className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
                     >
                       <Card className="border-0 bg-gray-900">
                         <CardContent className="p-2">
                           <div className="aspect-square overflow-hidden rounded-lg">
                             <img
-                              src="/placeholder.svg"
-                              alt={`Cast Member ${index + 1}`}
-                              className="h-full w-full object-cover"
+                              src={`https://image.tmdb.org/t/p/w500${actor.profile_path}`}
+                              alt={`Cast Member ${actor.id + 1}`}
+                              className="h-full w-full object-cover object-center"
                             />
                           </div>
                           <div className="mt-2 text-sm">
-                            <div className="font-medium">Actor Name</div>
-                            <div className="text-gray-400">Character</div>
+                            <div className="font-medium">{actor.character}</div>
+                            <div className="text-gray-400">
+                              {actor.original_name}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -230,52 +201,12 @@ export function MovieDetails() {
           </div>
 
           {/* Right Column - Recommendations */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold sm:text-xl text-center text-orange-500">
-              Recommended Movies
-            </h2>
-            <ScrollArea className="h-[50vh] pr-4 lg:h-[calc(100vh-100px)]">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                {isErrorSimilarMovies && <h1>Ups Error</h1>}
-                {isLoadingSimilarMovies ? (
-                  <h1>Loading</h1>
-                ) : (
-                  similarMovies?.map((movie) => {
-                    return (
-                      <Link
-                        key={movie.id}
-                        to={`/movie/${movie.id}`}
-                        className="block"
-                      >
-                        <Card className="border-0 bg-gray-900 transition-colors hover:bg-gray-800">
-                          <CardContent className="p-2">
-                            <div className="aspect-[16/9] overflow-hidden rounded-lg">
-                              <img
-                                src={`${baseImageUrl}w500${movie?.backdrop_path}`}
-                                alt={`Movie ${movie.id + 1}`}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <div className="mt-2">
-                              <div className="font-medium">{movie.title}</div>
-                              <div className="flex items-center gap-2 text-sm text-gray-400">
-                                <span>{movie.release_date}</span>
-                                <span>•</span>
-                                <div className="flex items-center gap-1">
-                                  <Star className="h-3 w-3 fill-orange-500 text-orange-500" />
-                                  <span>{movie.vote_average}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    );
-                  })
-                )}
-              </div>
-            </ScrollArea>
-          </div>
+          <RecommendedMovies
+            similarMovies={similarMovies}
+            isErrorSimilarMovies={isErrorSimilarMovies}
+            isLoadingSimilarMovies={isLoadingSimilarMovies}
+            baseImageUrl={baseImageUrl}
+          ></RecommendedMovies>
         </div>
       </div>
     </div>
