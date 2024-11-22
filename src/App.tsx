@@ -1,8 +1,26 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MoviesPage } from "./pages/movies";
+
 import HomePage from "./pages/HomePage"; // Import HomePage to use in the Router
 import Navbar from "./components/navbar";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+
+import { MovieDetails } from "./pages/moviedetails";
+import { MovieGrid } from "./components/movie-grid";
+import { HeroSection } from "./components/hero-section";
+import { FeatureSection } from "./components/feature-section";
+
+// function HomePage() {
+//   return (
+//     <main>
+//       <HeroSection />
+//       <FeatureSection />
+//       <MovieGrid title="NOW SHOWING" movies={[]} />
+//       <MovieGrid title="JUST REVIEWED" movies={[]} />
+//     </main>
+//   );
+// }
+
 
 function App() {
   return (
@@ -12,6 +30,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} /> {/* HomePage is rendered at root path */}
           <Route path="/movies" element={<MoviesPage />} />
+          <Route path="/movie/:id" element={<MovieDetails />}></Route>
         </Routes>
       </div>
     </Router>
