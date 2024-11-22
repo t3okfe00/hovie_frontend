@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Use custom properties for border color */
 @layer base {
   :root {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
@@ -21,19 +21,62 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
+    --border: 240 3.7% 15.9%; /* Custom border color */
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
     --radius: 0.75rem;
   }
-}
 
-@layer base {
   * {
-    @apply border-border;
+    /* Apply custom border color using the --border variable */
+    border-color: hsl(var(--border));
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* Skeleton loader animation */
+.skeleton {
+  background-color: #e0e0e0; /* Light grey background */
+  border-radius: var(--radius); /* Using the custom radius */
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* Skeleton specific height for images (adjust as needed) */
+.skeleton.h-64 {
+  height: 16rem; /* This should match the height of your images */
+  width: 100%;   /* Ensure skeleton takes full width */
+}
+
+/* Pulse animation for skeleton */
+@keyframes pulse {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Applying fade-in animation */
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
 }

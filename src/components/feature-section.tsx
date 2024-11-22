@@ -5,14 +5,17 @@ const features = [
   {
     icon: ListChecks,
     title: 'Buy tickets and secure your favorite movie seats',
+    link: '/Showtimes'
   },
   {
     icon: Heart,
     title: 'Share your love for your favorite movies',
+    link: '/movie'
   },
   {
     icon: Users,
     title: 'Create groups and add friends and family',
+    link: '/Groups'
   },
   {
     icon: Star,
@@ -21,16 +24,19 @@ const features = [
   {
     icon: List,
     title: 'Compile and share lists of movies',
+    link: '/Movies'
   },
   {
     icon: Share2,
     title: 'Share your thoughts with the community',
+    link: '/Reviews'
   },
 ];
 
 export function FeatureSection() {
   return (
-    <div className="py-16 bg-muted/50">
+    <div className="py-16">
+      {/* bg-muted/50 */}
       <div className="max-w-7xl mx-auto px-4">
         <h3 className="text-2xl font-semibold text-orange-500 mb-8 text-center">
           Community for movie enthusiasts
