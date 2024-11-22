@@ -87,7 +87,7 @@ export function MoviesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-screen bg-background pt-20">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center gap-4 mb-8">
           <div className="relative flex-1">
