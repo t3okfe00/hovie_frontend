@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
+import LoadingSpinner from "./LoadingSpinner";
 
 const RecommendedMovies = ({
   similarMovies,
@@ -24,7 +25,7 @@ const RecommendedMovies = ({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
           {isErrorSimilarMovies && <h1>Ups Error</h1>}
           {isLoadingSimilarMovies ? (
-            <h1>Loading</h1>
+            <LoadingSpinner />
           ) : (
             similarMovies?.map((movie) => {
               return (

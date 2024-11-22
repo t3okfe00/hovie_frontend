@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/carousel";
 import { useQuery } from "@tanstack/react-query";
 import RecommendedMovies from "@/components/common/RecommendedMovies";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export function MovieDetails() {
   const { id } = useParams<{ id: string }>();
@@ -106,11 +107,7 @@ export function MovieDetails() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
+    return <LoadingSpinner></LoadingSpinner>;
   }
 
   return (
