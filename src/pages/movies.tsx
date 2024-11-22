@@ -42,7 +42,7 @@ export function MoviesPage() {
     queryFn: async () => {
       const response = await fetch(`${BASE_URL}/genres`);
       const data = await response.json();
-
+      console.log("Fetched genres", data);
       return data;
     },
     staleTime: 1000 * 60 * 20, // 5 minutes
