@@ -7,6 +7,7 @@ import { Movie } from "@/types";
 import { sortMovies } from "@/lib/utils";
 import { MoviesList } from "@/components/common/MoviesList";
 import { MoviesPagination } from "@/components/common/MoviesPagination";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 import {
   Sheet,
@@ -122,7 +123,7 @@ export function MoviesPage() {
       {isError && <h1>Please try again later</h1>}
       {isMoviesError && <h1>Please try again later</h1>}
       {isLoading ? (
-        <h1>Loading</h1>
+        <LoadingSpinner />
       ) : (
         <div className="min-h-screen bg-background py-8">
           <div className="max-w-7xl mx-auto px-4">
@@ -177,7 +178,7 @@ export function MoviesPage() {
             )}
 
             {isMoviesLoading ? (
-              <h1>Loading</h1>
+              <LoadingSpinner />
             ) : (
               <MoviesList movies={filteredMovies} />
             )}
