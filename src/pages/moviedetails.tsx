@@ -6,7 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import MoviePlayer from "@/components/common/MoviePlayer";
 import MovieOverview from "@/components/common/MovieOverview";
 import MovieHeading from "@/components/common/MovieHeading";
-import { Star } from "lucide-react";
+import CastCarousel from "@/components/common/CastCarousel";
+import { Cast, Star } from "lucide-react";
 
 import {
   Carousel,
@@ -111,7 +112,7 @@ export function MovieDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-black p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-black p-4 sm:p-6 lg:p-8 my-12">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-6">
@@ -127,40 +128,7 @@ export function MovieDetails() {
 
             <MovieOverview movie={movie} />
 
-            {/* Cast Carousel */}
-            <div className="w-full">
-              <h2 className="mb-4 text-lg font-semibold sm:text-xl">Cast</h2>
-              <Carousel>
-                <CarouselContent>
-                  {movieCredits?.cast?.slice(0, 10).map((actor) => (
-                    <CarouselItem
-                      key={actor.id}
-                      className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
-                    >
-                      <Card className="border-0 bg-gray-900">
-                        <CardContent className="p-2">
-                          <div className="aspect-square overflow-hidden rounded-lg">
-                            <img
-                              src={`https://image.tmdb.org/t/p/w500${actor.profile_path}`}
-                              alt={`Cast Member ${actor.id + 1}`}
-                              className="h-full w-full object-cover object-center"
-                            />
-                          </div>
-                          <div className="mt-2 text-sm">
-                            <div className="font-medium">{actor.character}</div>
-                            <div className="text-gray-400">
-                              {actor.original_name}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="hidden sm:flex" />
-                <CarouselNext className="hidden sm:flex" />
-              </Carousel>
-            </div>
+            <CastCarousel movieCredits={movieCredits ?? null} />
 
             {/* Reviews Section */}
             <div>
