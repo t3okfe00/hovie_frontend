@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { YT } from "@types/youtube";
 import YouTube from "react-youtube"; // Import the react-youtube component
+import LoadingSpinner from "./LoadingSpinner";
 
 const MovieVideo = ({
   videoKey,
   fullBackdropUrl,
+  isLoadingVideos,
+  isErrorVideos,
 }: {
   videoKey: string;
   fullBackdropUrl: string;
+  isLoadingVideos: boolean;
+  isErrorVideos: boolean;
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  console.log("LINK", fullBackdropUrl);
 
   // YouTube Player options
   const opts = {
@@ -32,7 +36,16 @@ const MovieVideo = ({
 
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-900">
+      {isErrorVideos && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="text-lg text-red-500">
+            There was an error loading the video...
+          </h1>
+        </div>
+      )}
+      {isLoadingVideos && <LoadingSpinner />}
       {/* Conditionally render the Play Button or the Video iframe */}
+
       {!isPlaying ? (
         <>
           <div

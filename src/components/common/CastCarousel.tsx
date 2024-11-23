@@ -7,6 +7,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import LoadingSpinner from "./LoadingSpinner";
 // Define types for the props
 interface Actor {
   id: number;
@@ -21,13 +22,25 @@ interface MovieCredits {
 
 interface CastCarouselProps {
   movieCredits: MovieCredits | null;
+  isLoadingCast: boolean;
+  isErrorCast: boolean;
 }
 
-const CastCarousel: React.FC<CastCarouselProps> = ({ movieCredits }) => {
+const CastCarousel: React.FC<CastCarouselProps> = ({
+  movieCredits,
+  isLoadingCast,
+  isErrorCast,
+}) => {
   return (
     <div className="w-full">
       <h2 className="mb-4 text-lg font-semibold sm:text-xl">Cast</h2>
       <Carousel>
+        {isLoadingCast && <LoadingSpinner />}
+        {isErrorCast && (
+          <div className="text-red-500">
+            There was an error loading the cast...
+          </div>
+        )}
         <CarouselContent>
           {movieCredits?.cast?.slice(0, 10).map((actor) => (
             <CarouselItem

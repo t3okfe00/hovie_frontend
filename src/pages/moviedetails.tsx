@@ -1,21 +1,13 @@
 import { useParams } from "react-router-dom";
 
-import { useMemo } from "react";
-import { CastMember, Movie, MovieCredits } from "@/types";
+import { Movie, MovieCredits } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import MoviePlayer from "@/components/common/MoviePlayer";
 import MovieOverview from "@/components/common/MovieOverview";
 import MovieHeading from "@/components/common/MovieHeading";
 import CastCarousel from "@/components/common/CastCarousel";
-import { Cast, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { useQuery } from "@tanstack/react-query";
 import RecommendedMovies from "@/components/common/RecommendedMovies";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
@@ -123,12 +115,18 @@ export function MovieDetails() {
               <MoviePlayer
                 videoKey={video?.[0]?.key}
                 fullBackdropUrl={fullBackdropUrl}
+                isLoadingVideos={isLoadingVideos}
+                isErrorVideos={isErrorVideos}
               />
             </div>
 
             <MovieOverview movie={movie} />
 
-            <CastCarousel movieCredits={movieCredits ?? null} />
+            <CastCarousel
+              movieCredits={movieCredits ?? null}
+              isLoadingCast={isLoadingCast}
+              isErrorCast={isErrorCast}
+            />
 
             {/* Reviews Section */}
             <div>
@@ -165,7 +163,7 @@ export function MovieDetails() {
             </div>
           </div>
 
-          {/* Right Column - Recommendations */}
+          {/*Recommendations */}
           <RecommendedMovies
             similarMovies={similarMovies}
             isErrorSimilarMovies={isErrorSimilarMovies}
