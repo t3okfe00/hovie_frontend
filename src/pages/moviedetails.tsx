@@ -119,7 +119,6 @@ export function MovieDetails() {
                 isErrorVideos={isErrorVideos}
               />
             </div>
-
             <MovieOverview movie={movie} />
 
             <CastCarousel
