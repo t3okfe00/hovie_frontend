@@ -4,6 +4,7 @@ import { HeroSection } from "./components/hero-section";
 import { FeatureSection } from "./components/feature-section";
 import { MovieGrid } from "./components/movie-grid";
 import { MoviesPage } from "./pages/movies";
+import Showtimes from "./pages/showtimes";
 
 function HomePage() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/movies" element={<MoviesPage />} />
+          <Route path="/showtimes" element={<Showtimes />} />
         </Routes>
       </div>
     </Router>
