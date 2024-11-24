@@ -125,7 +125,7 @@ export function MoviesPage() {
       {isLoading ? (
         <LoadingSpinner />
       ) : (
-        <div className="min-h-screen bg-background pt-16">
+        <div className="min-h-screen bg-background pt-16 my-10">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center gap-4 mb-8">
               <div className="relative flex-1">
