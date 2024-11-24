@@ -12,8 +12,8 @@ interface GroupPageProps {
 
 export function GroupPage({ isOwner = true }: GroupPageProps) {
     return (
-        <div className="min-h-screen bg-background">
-            <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="min-h-screen bg-background py-8">
+            <div className="max-w-7xl mx-auto px-4">
                 <div className="mb-8">
                     <div className="relative h-64 rounded-lg overflow-hidden">
                         <img
@@ -21,10 +21,11 @@ export function GroupPage({ isOwner = true }: GroupPageProps) {
                             alt="Group cover"
                             className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"/>
                         <div className="absolute bottom-6 left-6">
                             <h1 className="text-4xl font-bold text-white mb-2">Film Noir Appreciation</h1>
-                            <p className="text-white/80">Exploring the shadowy world of film noir and neo-noir cinema</p>
+                            <p className="text-white/80">Exploring the shadowy world of film noir and neo-noir
+                                cinema</p>
                         </div>
                     </div>
                 </div>
@@ -35,26 +36,26 @@ export function GroupPage({ isOwner = true }: GroupPageProps) {
                             <div className="flex items-center justify-between mb-4">
                                 <TabsList>
                                     <TabsTrigger value="chat" className="flex items-center gap-2">
-                                        <MessageSquare className="w-4 h-4" />
+                                        <MessageSquare className="w-4 h-4"/>
                                         Group Chat
                                     </TabsTrigger>
                                     <TabsTrigger value="votes" className="flex items-center gap-2">
-                                        <ThumbsUp className="w-4 h-4" />
+                                        <ThumbsUp className="w-4 h-4"/>
                                         Movie Votes
                                     </TabsTrigger>
                                 </TabsList>
-                                {isOwner && <JoinRequestsDialog />}
+                                {isOwner && <JoinRequestsDialog/>}
                             </div>
 
                             <TabsContent value="chat">
                                 <Card className="p-6">
-                                    <GroupChat />
+                                    <GroupChat/>
                                 </Card>
                             </TabsContent>
 
                             <TabsContent value="votes">
                                 <Card className="p-6">
-                                    <MovieVote />
+                                    <MovieVote/>
                                 </Card>
                             </TabsContent>
                         </Tabs>
@@ -63,7 +64,7 @@ export function GroupPage({ isOwner = true }: GroupPageProps) {
                     <div className="lg:col-span-4">
                         <Card className="p-6 h-[692px]">
                             <h3 className="text-lg font-semibold mb-4">Members</h3>
-                            <MembersList />
+                            <MembersList/>
                         </Card>
                     </div>
                 </div>

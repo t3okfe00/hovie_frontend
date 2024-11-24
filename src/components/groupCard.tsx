@@ -5,20 +5,24 @@ import { Button } from '@/components/ui/button';
 
 interface GroupCardProps {
     name: string;
-    members: number;
+    members?: number;
     description: string;
     category: string;
-    imageUrl: string;
+    pictureUrl: string; // Updated property name
 }
 
-export function GroupCard({ name, members, description, category, imageUrl }: GroupCardProps) {
+const BASE_URL = 'http://localhost:3000'; // Base URL
+
+export function GroupCard({ name, members = 0, description, category, pictureUrl }: GroupCardProps) {
+
     return (
         <Card className="overflow-hidden transition-all hover:shadow-lg border-border/40 flex flex-col justify-between">
             <div className="relative h-40 overflow-hidden">
                 <img
-                    src={imageUrl}
+                    src={`${BASE_URL}${pictureUrl}`}
                     alt={name}
                     className="object-cover w-full h-full transition-transform hover:scale-105"
+                    onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/150'; }} // Placeholder image
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                 <Badge className="absolute top-3 right-3" variant="secondary">

@@ -9,28 +9,51 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface YourGroupCardProps {
+    id: number;
     name: string;
     members: number;
     description: string;
     category: string;
-    imageUrl: string;
+    pictureUrl: string;
     isOwner: boolean;
 }
 
-export function YourGroupCard({ name, members, description, category, imageUrl, isOwner }: YourGroupCardProps) {
+const userId = 9; // Replace with actual user ID
+const BASE_URL = 'http://localhost:3000'; // Base URL
+
+export function YourGroupCard({ id, name, members, description, category, pictureUrl, isOwner }: YourGroupCardProps) {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    const deleteGroupMutation = useMutation({
+        mutationFn: async (groupId: number) => {
+            const response = await fetch(`${BASE_URL}/groups/${groupId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) throw new Error('Failed to delete group');
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['yourGroups', userId] });
+        },
+    });
+
+    const handleDelete = () => {
+        deleteGroupMutation.mutate(id);
+    };
 
     const handleViewGroup = () => {
-        navigate('/groupPage');
+        navigate(`/groupPage/${id}`);
     };
 
     return (
         <Card className="overflow-hidden transition-all hover:shadow-lg border-border/40 flex flex-col justify-between">
             <div className="relative h-40 overflow-hidden">
                 <img
-                    src={imageUrl}
+                    src={`${BASE_URL}${pictureUrl}`}
                     alt={name}
                     className="object-cover w-full h-full transition-transform hover:scale-105"
                 />
@@ -54,7 +77,7 @@ export function YourGroupCard({ name, members, description, category, imageUrl, 
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem>Edit Group</DropdownMenuItem>
                                 <DropdownMenuItem>Manage Members</DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive">
+                                <DropdownMenuItem className="text-destructive" onClick={handleDelete}>
                                     Delete Group
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
