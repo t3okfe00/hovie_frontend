@@ -8,12 +8,15 @@ interface GroupCardProps {
     members?: number;
     description: string;
     category: string;
-    pictureUrl: string; // Updated property name
+    pictureUrl: string;
+    ownersId: number;
+    userId: number;
 }
 
-const BASE_URL = 'http://localhost:3000'; // Base URL
+const BASE_URL = 'http://localhost:3000';
 
-export function GroupCard({ name, members = 0, description, category, pictureUrl }: GroupCardProps) {
+export function GroupCard({ name, members = 0, description, category, pictureUrl, ownersId, userId }: GroupCardProps) {
+    const isOwner = ownersId === userId;
 
     return (
         <Card className="overflow-hidden transition-all hover:shadow-lg border-border/40 flex flex-col justify-between">
@@ -22,7 +25,7 @@ export function GroupCard({ name, members = 0, description, category, pictureUrl
                     src={`${BASE_URL}${pictureUrl}`}
                     alt={name}
                     className="object-cover w-full h-full transition-transform hover:scale-105"
-                    onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/150'; }} // Placeholder image
+                    onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/150'; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                 <Badge className="absolute top-3 right-3" variant="secondary">
@@ -40,9 +43,15 @@ export function GroupCard({ name, members = 0, description, category, pictureUrl
             </CardHeader>
             <CardContent className="flex flex-col justify-between flex-1">
                 <CardDescription className="line-clamp-2 mb-4">{description}</CardDescription>
-                <Button className="w-full mt-auto" variant="secondary">
-                    Request to Join
-                </Button>
+                {isOwner ? (
+                    <Button className="w-full mt-auto" variant="secondary">
+                        View Group
+                    </Button>
+                ) : (
+                    <Button className="w-full mt-auto" variant="secondary">
+                        Request to Join
+                    </Button>
+                )}
             </CardContent>
         </Card>
     );

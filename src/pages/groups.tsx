@@ -150,6 +150,7 @@ export function Groups() {
                                         {...group}
                                         members={Number(group.members)}
                                         imageUrl={group.profileUrl}
+                                        userId={userId} // Pass the userId prop
                                     />
                                 ))}
                             </div>
@@ -198,6 +199,7 @@ export function Groups() {
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
+                                            userId={userId} // Pass the userId prop
                                         />
                                     ))}
                                 </div>
@@ -218,6 +220,7 @@ export function Groups() {
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
+                                            userId={userId} // Pass the userId prop
                                         />
                                     ))}
                                 </div>
