@@ -55,6 +55,7 @@ import { MovieDetails } from "./pages/moviedetails";
 import { MovieGrid } from "./components/movie-grid";
 import { HeroSection } from "./components/hero-section";
 import { FeatureSection } from "./components/feature-section";
+import Chatbot from "./components/Chatbot";
 
 function App() {
   return (
@@ -67,7 +68,9 @@ function App() {
           <Route path="/movie/:id" element={<MovieDetails />}></Route>
         </Routes>
       </div>
+      <Chatbot />
     </Router>
+    
   );
 }
 

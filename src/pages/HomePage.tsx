@@ -40,7 +40,7 @@ function MovieRow({ title, movies }: { title: string; movies: Movie[] }) {
                   <CardContent className="p-0">
                     {movie.images.length > 0 ? (
                       <img
-                        src={movie.images[0]}
+                        src={movie.images[1]}
                         alt={movie.title}
                         className="w-full h-[150px] sm:h-[200px] md:h-[250px] object-cover transition-all duration-300 group-hover:opacity-80"
                       />
