@@ -1,19 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Import for React Query
-import { Navigation } from "./components/ui/navigation";
-import { HeroSection } from "./components/hero-section";
-import { FeatureSection } from "./components/feature-section";
-import { MovieGrid } from "./components/movie-grid";
 import { MoviesPage } from "./pages/movies";
 import { Groups } from "./pages/groups";
 import { GroupPage } from "@/pages/groupPage"; // Import the GroupPage component
 import HomePage from "./pages/HomePage"; // Import HomePage to use in the Router
-import Navbar from "./components/navbar";
 import { MovieDetails } from "./pages/moviedetails";
 import Showtimes from "./pages/showtimes";
-
-// Create a QueryClient instance
-const queryClient = new QueryClient();
+import Navbar from "@/components/Navbar.tsx";
 
 function App() {
   return (
@@ -26,6 +18,8 @@ function App() {
           <Route path="/movies" element={<MoviesPage />} />
           <Route path="/movie/:id" element={<MovieDetails />}></Route>
           <Route path="/showtimes" element={<Showtimes />} />
+            <Route path="/groups" element={<Groups />} />
+            <Route path="/group/:id" element={<GroupPage />} />
         </Routes>
       </div>
     </Router>
