@@ -7,37 +7,29 @@ import { MovieGrid } from "./components/movie-grid";
 import { MoviesPage } from "./pages/movies";
 import { Groups } from "./pages/groups";
 import { GroupPage } from "@/pages/groupPage"; // Import the GroupPage component
+import HomePage from "./pages/HomePage"; // Import HomePage to use in the Router
+import Navbar from "./components/navbar";
+import { MovieDetails } from "./pages/moviedetails";
+import Showtimes from "./pages/showtimes";
 
 // Create a QueryClient instance
 const queryClient = new QueryClient();
 
-function HomePage() {
-    return (
-        <main>
-            <HeroSection />
-            <FeatureSection />
-            <MovieGrid title="NOW SHOWING" />
-            <MovieGrid title="JUST REVIEWED" />
-        </main>
-    );
-}
-
 function App() {
-    return (
-        <QueryClientProvider client={queryClient}> {/* Wrap the app with QueryClientProvider */}
-            <Router>
-                <div className="min-h-screen bg-background">
-                    <Navigation />
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/movies" element={<MoviesPage />} />
-                        <Route path="/groups" element={<Groups />} />
-                        <Route path="/groupPage" element={<GroupPage />} /> {/* Add this route */}
-                    </Routes>
-                </div>
-            </Router>
-        </QueryClientProvider>
-    );
+  return (
+    <Router>
+      <div className="min-h-screen bg-background">
+        <Navbar /> {/* Ensure Navigation is visible */}
+        <Routes>
+          <Route path="/" element={<HomePage />} />{" "}
+          {/* HomePage is rendered at root path */}
+          <Route path="/movies" element={<MoviesPage />} />
+          <Route path="/movie/:id" element={<MovieDetails />}></Route>
+          <Route path="/showtimes" element={<Showtimes />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
 export default App;
