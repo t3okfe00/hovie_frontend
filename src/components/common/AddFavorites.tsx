@@ -2,12 +2,20 @@ import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { Movie, Favorite } from "@/types";
 import { saveFavorite, fetchFavorites } from "@/services/favorites";
+import { useAuth } from "@/hooks/useAuth";
 
 const AddToFavorites = ({ movie }: { movie: Movie }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user } = useAuth(); // Assuming your Auth context provides `user`
+  console.log("User", user);
 
   useEffect(() => {
     const checkIfFavorite = async () => {
+      if (!user) {
+        setIsLoggedIn(false);
+        return;
+      }
       try {
         const favorites = await fetchFavorites(); // Fetch user's favorites
         console.log("Favorites", favorites);
@@ -27,6 +35,11 @@ const AddToFavorites = ({ movie }: { movie: Movie }) => {
   console.log("Movie", movie);
 
   const handleFavoriteClick = async () => {
+    if (!user) {
+      alert("You need to log in to add this movie to your favorites!");
+      return;
+    }
+
     setIsFavorite(!isFavorite);
     // Add logic to save favorite status, e.g., API call or local storage
     try {
