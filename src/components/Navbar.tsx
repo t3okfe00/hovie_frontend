@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Film } from "lucide-react";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { useAuth } from "@/hooks/useAuth";
+// import { useState } from "react";
+// import { Film } from "lucide-react";
+// import { GoogleOAuthProvider } from "@react-oauth/google";
+// import { useAuth } from "@/hooks/useAuth";
 // import React, { useState } from "react";
 // import { Film, MailIcon } from "lucide-react";
 // import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
@@ -369,9 +369,12 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { LogOut, User } from "lucide-react";
 import {jwtDecode} from "jwt-decode";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showSignupModal, setShowSignupModal] = useState(false);
 
   const { user, logout, token } = useAuth();
   const navigate = useNavigate();
@@ -382,12 +385,12 @@ export default function Navbar() {
   };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  // const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLoginSuccess = (response) => {
     try {
@@ -402,7 +405,9 @@ export default function Navbar() {
     }
   };
 
-  const handleLogout = () => setUser(null);
+
+
+  // const handleLogout = () => setUser(null);
 
   return (
     <GoogleOAuthProvider clientId="your-google-client-id">
@@ -416,12 +421,16 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex space-x-6">
+          
+             <Link to="/" className="hover:text-orange-500">Home</Link>
             <Link to="/movies" className="hover:text-orange-500">
               Movies
             </Link>
             <Link to="/showtimes" className="hover:text-orange-500">
               Showtimes
             </Link>
+            <Link to="/groups" className="hover:text-orange-500">Groups</Link>
+             <Link to="/lists" className="hover:text-orange-500">Profiles</Link>
           </div>
 
             <div className="flex items-center gap-4">
@@ -510,6 +519,22 @@ export default function Navbar() {
         onClose={() => setShowSignupModal(false)}
         type="signup"
       />
+
+{/* Mobile Menu */}
+<div
+        className={`md:hidden ${isMenuOpen ? "block" : "hidden"} bg-black/90 absolute top-16 left-0 w-full p-4 z-40`}
+      >
+        <div className="flex flex-col items-start space-y-4 mt-4 px-4">
+          <Link to="/movies" className="text-white hover:text-orange-500">Movies</Link>
+          <Link to="/showtimes" className="text-white hover:text-orange-500">Showtimes</Link>
+          <Link to="/lists" className="text-white hover:text-orange-500">Lists</Link>
+          <Link to="/groups" className="text-white hover:text-orange-500">Groups</Link>
+          <Link to="/" className="hover:text-orange-500 transition-colors">Home</Link>
+        </div>
+      </div>
+
     </GoogleOAuthProvider>
+
   );
 }
+
