@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Filters } from "@/components/common/Filters";
+import { useAuth } from "@/hooks/useAuth";
 const BASE_URL = "http://localhost:3000/movie";
 
 export function MoviesPage() {
@@ -34,19 +35,26 @@ export function MoviesPage() {
   const [ratingRange, setRatingRange] = useState([0, 10]);
   const [selectedSort, setSelectedSort] = useState(""); // Default sort option
 
+  const { user, token } = useAuth();
+
   const {
     data: genres,
-    isError,
-    isLoading,
+    isError: isGenresError,
+    isLoading: isGenresLoading,
   } = useQuery({
-    queryKey: ["genres"],
+    queryKey: ["genres", token],
     queryFn: async () => {
-      const response = await fetch(`${BASE_URL}/genres`);
+      const response = await fetch(`${BASE_URL}/genres`, {
+        credentials: "include",
+      });
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       console.log("Fetched genres", data);
       return data;
     },
     staleTime: 1000 * 60 * 20, // 5 minutes
+    retry: 3,
   });
 
   const {
@@ -54,13 +62,16 @@ export function MoviesPage() {
     isError: isMoviesError,
     isLoading: isMoviesLoading,
   } = useQuery({
-    queryKey: ["movies", isSearchMode, page, search],
+    queryKey: ["movies", isSearchMode, page, search, token],
     queryFn: async () => {
       const endpoint = isSearchMode
         ? `${BASE_URL}/search?query=${search}&language=en-US&page=${page}` // Search API
         : `${BASE_URL}/popular?page=${page}&language=en-US`; // Popular movies API
-      const response = await fetch(endpoint);
-      if (!response.ok) throw new Error("Failed to fetch movies");
+      const response = await fetch(endpoint, {
+        credentials: "include",
+      });
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
 
       const normalizedTotalPages = isSearchMode
@@ -75,6 +86,7 @@ export function MoviesPage() {
       };
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 3,
   });
 
   const resetFilters = () => {
@@ -120,12 +132,36 @@ export function MoviesPage() {
 
   return (
     <div>
-      {isError && <h1>Please try again later</h1>}
-      {isMoviesError && <h1>Please try again later</h1>}
-      {isLoading ? (
+      {(isGenresError || isMoviesError) && (
+        <div className="flex items-center justify-center min-h-screen bg-red-50">
+          <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
+            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-red-500" />
+            <h1 className="text-2xl font-bold text-red-600 mb-4">
+              {isGenresError ? "Genres Fetch Error" : "Movies Fetch Error"}
+            </h1>
+            <p className="text-red-700 mb-6">
+              {isGenresError
+                ? "Unable to load movie genres. This may affect filtering capabilities."
+                : "Unable to load movies. Please check your connection or try again later."}
+            </p>
+            {(isGenresError ? isGenresError : isMoviesError) && (
+              <div className="bg-red-100 p-4 rounded-md text-red-800 text-sm">
+                <p>You are not Authorized to see this page</p>
+              </div>
+            )}
+            <Button
+              onClick={() => window.location.reload()}
+              className="mt-4 w-full"
+            >
+              Retry Loading
+            </Button>
+          </div>
+        </div>
+      )}
+      {!isGenresError && !isMoviesError && isGenresLoading ? (
         <LoadingSpinner />
       ) : (
-        <div className="min-h-screen bg-background pt-16">
+        <div className="min-h-screen bg-background pt-16 my-10">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center gap-4 mb-8">
               <div className="relative flex-1">

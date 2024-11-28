@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import MovieCarousel from "@/components/MovieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import  Footer  from "../components/Footer";
+import Footer from "../components/Footer";
 
 // const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const API_KEY = 'fcefb9fb4e1f1f86914fa824bf441e7a';
@@ -102,17 +102,17 @@ function HomePage() {
             `${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}`
           );
           const details = await detailsResponse.json();
-          
+
           return {
             id: movie.id,
             title: movie.title,
             images: [
               `${IMAGE_BASE_URL}${movie.backdrop_path}`,
-              `${IMAGE_BASE_URL}${movie.poster_path}`
+              `${IMAGE_BASE_URL}${movie.poster_path}`,
             ].filter(Boolean),
             releaseDate: movie.release_date,
             voteAverage: movie.vote_average,
-            genres: details.genres?.map((g: { name: string }) => g.name) || []
+            genres: details.genres?.map((g: { name: string }) => g.name) || [],
           };
         })
       );

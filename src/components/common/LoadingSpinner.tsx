@@ -10,9 +10,9 @@ const LoadingSpinner = () => {
         </div>
       </div>
       <div className="mt-8 flex flex-col items-center">
-        <div className="text-orange-500 font-semibold text-xl mb-2">
+        {/* <div className="text-orange-500 font-semibold text-xl mb-2">
           Loading
-        </div>
+        </div> */}
         <div className="flex space-x-2">
           {[...Array(3)].map((_, i) => (
             <div
