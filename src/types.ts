@@ -7,6 +7,20 @@ export type User = {
   createdAt: string;
 };
 
+export type AuthContextType = {
+  user: User | null;
+  login: (data: { email: string; password: string }) => Promise<void>;
+  signUp: (data: {
+    name: string;
+    email: string;
+    password: string;
+  }) => Promise<User>;
+  logout: () => void;
+  token: string | null;
+  isLoading: boolean;
+  isError: boolean;
+};
+
 export type CreateUserInput = {
   email: string;
   password: string;
