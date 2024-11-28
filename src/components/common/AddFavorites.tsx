@@ -1,16 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
-import { Movie } from "@/types";
-import { saveFavorite } from "@/services/favorites";
+import { Movie, Favorite } from "@/types";
+import { saveFavorite, fetchFavorites } from "@/services/favorites";
 
 const AddToFavorites = ({ movie }: { movie: Movie }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    const checkIfFavorite = async () => {
+      try {
+        const favorites = await fetchFavorites(); // Fetch user's favorites
+        console.log("Favorites", favorites);
+        const isMovieFavorite = favorites.favorites.some((fav: Favorite) => {
+          console.log("FAV", fav);
+          return fav.moviesId === movie.id;
+        });
+        setIsFavorite(isMovieFavorite); // Set the state based on whether the movie is a favorite
+      } catch (error) {
+        console.error("Error fetching favorites", error);
+      }
+    };
+
+    checkIfFavorite();
+  }, [movie.id]); // Re-run the effect if the movie changes
+
+  console.log("Movie", movie);
 
   const handleFavoriteClick = async () => {
     setIsFavorite(!isFavorite);
     // Add logic to save favorite status, e.g., API call or local storage
     try {
-      await saveFavorite(String(movie.id), !isFavorite);
+      await saveFavorite(String(movie.id), !isFavorite, movie.title);
       console.log("Favorite updated");
     } catch (error) {
       console.error("Error updating favorite", error);

@@ -8,7 +8,6 @@ import Showtimes from "./pages/showtimes";
 import Navbar from "@/components/Navbar.tsx";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import { ProtectedRoute } from "./pages/ProtectedRoute";
 
 function App() {
   return (
