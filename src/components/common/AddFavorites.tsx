@@ -3,6 +3,8 @@ import { Heart } from "lucide-react";
 import { Movie, Favorite } from "@/types";
 import { saveFavorite, fetchFavorites } from "@/services/favorites";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddToFavorites = ({ movie }: { movie: Movie }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -36,7 +38,7 @@ const AddToFavorites = ({ movie }: { movie: Movie }) => {
 
   const handleFavoriteClick = async () => {
     if (!user) {
-      alert("You need to log in to add this movie to your favorites!");
+      toast.error("You need to log in to add this movie to your favorites!");
       return;
     }
 

@@ -1,6 +1,8 @@
 import { Movie } from "@/types";
 import { Star } from "lucide-react";
 import AddToFavorites from "./AddFavorites";
+import { Toast } from "@radix-ui/react-toast";
+import { ToastContainer } from "react-toastify";
 const MovieHeading = ({ movie }: { movie: Movie }) => {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -12,6 +14,17 @@ const MovieHeading = ({ movie }: { movie: Movie }) => {
         <Star className="h-5 w-5 fill-orange-500 text-orange-500" />
         <span className="text-lg font-semibold">{movie.vote_average}</span>
       </div>
+      <ToastContainer
+        position="top-center" // Toast will appear at the top-center of the screen
+        autoClose={3000} // Toast will close automatically after 3 seconds
+        hideProgressBar={false} // Hide the progress bar
+        closeButton={false} // Hide close button
+        toastStyle={{
+          backgroundColor: "#fff", // Orange background
+          color: "black", // White text
+          borderRadius: "8px", // Optional: Rounded corners
+        }}
+      />
     </div>
   );
 };
