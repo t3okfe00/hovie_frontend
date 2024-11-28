@@ -98,7 +98,7 @@ export default function Navbar() {
                 href="/lists"
                 className="hover:text-orange-500 transition-colors"
               >
-                Lists
+                Profiles
               </a>
               <a
                 href="/groups"

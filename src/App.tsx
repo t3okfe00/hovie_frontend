@@ -56,6 +56,7 @@ import { MovieGrid } from "./components/movie-grid";
 import { HeroSection } from "./components/hero-section";
 import { FeatureSection } from "./components/feature-section";
 import Chatbot from "./components/Chatbot";
+import { ProfilePage } from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -66,6 +67,8 @@ function App() {
           <Route path="/" element={<HomePage />} /> {/* Use HomePage here */}
           <Route path="/movies" element={<MoviesPage />} />
           <Route path="/movie/:id" element={<MovieDetails />}></Route>
+          <Route path="/lists" element={<ProfilePage />} />
+          <Route path="/lists/:userId" element={<ProfilePage />} />
         </Routes>
       </div>
       <Chatbot />
@@ -75,4 +78,5 @@ function App() {
 }
 
 export default App;
+
 
