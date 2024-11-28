@@ -360,9 +360,9 @@ import React, { useState } from "react";
 import { Film, MailIcon } from "lucide-react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { LockClosedIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import AuthModal from "./AuthModal";
+import AuthModal from "./AuthModel";
 import { Link } from "react-router-dom";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 export default function Navbar() {
   const [showLoginModal, setShowLoginModal] = useState(false);
