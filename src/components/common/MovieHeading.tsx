@@ -12,7 +12,9 @@ const MovieHeading = ({ movie }: { movie: Movie }) => {
       <AddToFavorites movie={movie} />
       <div className="flex items-center gap-2">
         <Star className="h-5 w-5 fill-orange-500 text-orange-500" />
-        <span className="text-lg font-semibold">{movie.vote_average}</span>
+        <span className="text-lg font-semibold">
+          {movie.vote_average.toFixed(1)}
+        </span>
       </div>
       <ToastContainer
         position="top-center" // Toast will appear at the top-center of the screen
