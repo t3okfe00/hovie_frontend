@@ -7,6 +7,20 @@ export type User = {
   createdAt: string;
 };
 
+export type AuthContextType = {
+  user: User | null;
+  login: (data: { email: string; password: string }) => Promise<void>;
+  signUp: (data: {
+    name: string;
+    email: string;
+    password: string;
+  }) => Promise<User>;
+  logout: () => void;
+  token: string | null;
+  isLoading: boolean;
+  isError: boolean;
+};
+
 export type CreateUserInput = {
   email: string;
   password: string;
@@ -216,3 +230,11 @@ export type MovieRecommendation = {
   title: string;
   voteAverage: number;
 };
+
+export interface Favorite {
+  id: number; // Unique identifier for the favorite
+  addedAt: string; // The date when the movie was added to the favorites
+  usersId: number; // The ID of the user who added the movie to their favorites
+  moviesId: number; // The ID of the movie
+  movieName: string; // The name of the movie
+}

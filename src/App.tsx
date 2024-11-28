@@ -57,6 +57,9 @@ import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { MovieDetails } from "./pages/moviedetails";
 import Showtimes from "./pages/showtimes";
 import Navbar from "@/components/Navbar.tsx";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import { ToastContainer } from "react-toastify";
 import { MovieGrid } from "./components/movie-grid";
 import { HeroSection } from "./components/hero-section";
 import { FeatureSection } from "./components/feature-section";
@@ -65,6 +68,21 @@ import { ProfilePage } from "./pages/ProfilePage";
 
 function App() {
   return (
+    <div className="min-h-screen bg-background">
+      <Navbar /> {/* Ensure Navigation is visible */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />{" "}
+        {/* HomePage is rendered at root path */}
+        <Route path="/movies" element={<MoviesPage />} />
+        <Route path="/movie/:id" element={<MovieDetails />}></Route>
+        <Route path="/showtimes" element={<Showtimes />} />
+        <Route path="/groups" element={<Groups />} />
+        <Route path="/group/:id" element={<GroupPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+      <ToastContainer />
+    </div>
     <Router>
       <div className="min-h-screen bg-background">
         <Navbar /> {/* This keeps your navigation bar visible */}

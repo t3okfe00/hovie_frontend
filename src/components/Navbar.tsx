@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { Film } from "lucide-react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useAuth } from "@/hooks/useAuth";
 // import React, { useState } from "react";
 // import { Film, MailIcon } from "lucide-react";
 // import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
@@ -362,16 +366,27 @@ import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { LockClosedIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import AuthModal from "./AuthModel";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { LogOut, User } from "lucide-react";
 import {jwtDecode} from "jwt-decode";
 
 export default function Navbar() {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { user, logout, token } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLoginSuccess = (response) => {
@@ -409,6 +424,57 @@ export default function Navbar() {
             </Link>
           </div>
 
+            <div className="flex items-center gap-4">
+              {user ? (
+                <>
+                  <button
+                    onClick={() => navigate("/profile")}
+                    className="flex items-center gap-2 hover:text-orange-400 transition-colors"
+                  >
+                    <User size={20} />
+                    {user.email}
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 hover:text-orange-400 transition-colors"
+                  >
+                    <LogOut size={20} />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <div className="flex gap-10">
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="hover:text-orange-400 transition-colors"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => navigate("/signup")}
+                    style={{ padding: "0.2rem 0.5rem", borderRadius: "99px" }}
+                    className="hover:bg-orange-400 hover:text-black transition-colors"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* <div className="flex items-center space-x-4">
+              <Link
+                to="/login"
+                className="px-4 py-2 text-sm font-medium text-white hover:text-orange-500 transition-colors"
+              >
+                Log in
+              </Link>
+              <Link
+                to="/signup"
+                className="px-4 py-2 text-sm font-medium bg-orange-500 rounded-md hover:bg-orange-600 transition-colors"
+              >
+                Sign up
+              </Link>
+            </div> */}
           <div className="flex items-center space-x-4">
             {!user ? (
               <>
