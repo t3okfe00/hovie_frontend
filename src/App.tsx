@@ -70,7 +70,7 @@ function App() {
           <Route path="/showtimes" element={<Showtimes />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/group/:id" element={<GroupPage />} />
-          <Route path="/lists" element={<ProfilePage />} />
+          <Route path="/profiles" element={<ProfilePage />} />
           <Route path="/lists/:userId" element={<ProfilePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />

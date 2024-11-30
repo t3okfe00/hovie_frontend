@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log("Response from fetchUser", response);
         if (response.ok) {
           const data = await response.json();
+          console.log("Data from fetchUser", data);
           setUser(data.user);
         } else {
           setUser(null); // Handle unauthorized user

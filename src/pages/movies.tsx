@@ -35,7 +35,7 @@ export function MoviesPage() {
   const [ratingRange, setRatingRange] = useState([0, 10]);
   const [selectedSort, setSelectedSort] = useState(""); // Default sort option
 
-  const { user, token } = useAuth();
+  const { token } = useAuth();
 
   const {
     data: genres,

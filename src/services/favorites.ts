@@ -16,9 +16,9 @@ export const saveFavorite = async (
   });
 };
 
-export const fetchFavorites = async () => {
+export const fetchFavorites = async (page: number) => {
   const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-  const endpoint = `${BASE_URL}/favorites`;
+  const endpoint = `${BASE_URL}/favorites?limit=5&page=${page}`;
   const method = "GET";
 
   return apiClient(endpoint, { method });
