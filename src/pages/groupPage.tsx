@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare, ThumbsUp } from 'lucide-react';
@@ -6,27 +8,60 @@ import { MembersList } from '@/components/membersList';
 import { JoinRequestsDialog } from '@/components/joinRequests';
 import { MovieVote } from '@/components/movieVote';
 
+const BASE_URL = 'http://localhost:3000/groups';
+
 interface GroupPageProps {
     isOwner?: boolean;
 }
 
+interface Group {
+    id: number;
+    name: string;
+    description: string;
+    category: string;
+    members: number;
+    pictureUrl: string;
+}
+
 export function GroupPage({ isOwner = true }: GroupPageProps) {
+    const { id } = useParams<{ id: string }>();
+    const groupId = Number(id);
+
+    const { data: group, isLoading, isError } = useQuery<Group>({
+        queryKey: ['group', groupId],
+        queryFn: async () => {
+            const response = await fetch(`${BASE_URL}/${groupId}`);
+            if (!response.ok) throw new Error('Failed to fetch group data');
+            return response.json();
+        },
+        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+    });
+
+    if (isLoading) {
+        return <p>Loading group data...</p>;
+    }
+
+    if (isError) {
+        return <p>Failed to load group data. Please try again later.</p>;
+    }
+
     return (
         <div className="min-h-screen bg-background py-8">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="mb-8">
                     <div className="relative h-64 rounded-lg overflow-hidden">
                         <img
-                            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200"
+                            src={`http://localhost:3000${group?.pictureUrl}`}
                             alt="Group cover"
                             className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"/>
-                        <div className="absolute bottom-6 left-6">
-                            <h1 className="text-4xl font-bold text-white mb-2">Film Noir Appreciation</h1>
-                            <p className="text-white/80">Exploring the shadowy world of film noir and neo-noir
-                                cinema</p>
-                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+                        {group && (
+                            <div className="absolute bottom-6 left-6">
+                                <h1 className="text-4xl font-bold text-white mb-2">{group.name}</h1>
+                                <p className="text-white/80">{group.description}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -36,26 +71,26 @@ export function GroupPage({ isOwner = true }: GroupPageProps) {
                             <div className="flex items-center justify-between mb-4">
                                 <TabsList>
                                     <TabsTrigger value="chat" className="flex items-center gap-2">
-                                        <MessageSquare className="w-4 h-4"/>
+                                        <MessageSquare className="w-4 h-4" />
                                         Group Chat
                                     </TabsTrigger>
                                     <TabsTrigger value="votes" className="flex items-center gap-2">
-                                        <ThumbsUp className="w-4 h-4"/>
+                                        <ThumbsUp className="w-4 h-4" />
                                         Movie Votes
                                     </TabsTrigger>
                                 </TabsList>
-                                {isOwner && <JoinRequestsDialog/>}
+                                {isOwner && <JoinRequestsDialog />}
                             </div>
 
                             <TabsContent value="chat">
                                 <Card className="p-6">
-                                    <GroupChat/>
+                                    <GroupChat />
                                 </Card>
                             </TabsContent>
 
                             <TabsContent value="votes">
                                 <Card className="p-6">
-                                    <MovieVote/>
+                                    <MovieVote />
                                 </Card>
                             </TabsContent>
                         </Tabs>
@@ -64,7 +99,7 @@ export function GroupPage({ isOwner = true }: GroupPageProps) {
                     <div className="lg:col-span-4">
                         <Card className="p-6 h-[692px]">
                             <h3 className="text-lg font-semibold mb-4">Members</h3>
-                            <MembersList/>
+                            <MembersList />
                         </Card>
                     </div>
                 </div>
