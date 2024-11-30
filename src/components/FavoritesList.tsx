@@ -57,7 +57,7 @@ export function FavoritesList({
                 </Link>
                 {isOwner && (
                   <button
-                    onClick={() => onRemove?.(item.id)}
+                    onClick={() => onRemove?.(item.moviesId)}
                     className="p-2 text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   >
                     <Trash2 className="w-4 h-4" />

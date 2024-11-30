@@ -1,7 +1,6 @@
 import { Movie } from "@/types";
 import { Star } from "lucide-react";
 import AddToFavorites from "./AddFavorites";
-import { Toast } from "@radix-ui/react-toast";
 import { ToastContainer } from "react-toastify";
 const MovieHeading = ({ movie }: { movie: Movie }) => {
   return (

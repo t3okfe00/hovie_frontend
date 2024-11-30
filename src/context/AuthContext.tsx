@@ -21,6 +21,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
   const queryClient = useQueryClient(); // Use queryClient to invalidate the cache
 
+  const BACKEND_API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+
   useEffect(() => {
     // Check if user and token are in localStorage on component mount
     const storedUser = localStorage.getItem("user");
@@ -39,33 +41,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Optionally, you can fetch user data from API to validate if it's still valid, like:
     // fetchUser();
   }, []);
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const response = await fetch(`${BACKEND_API_URL}/user/me`, {
-  //         credentials: "include",
-  //       }); // Ensure cookies are sent
-  //       console.log("Response from fetchUser", response);
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         console.log("Data at USE AUTH", data);
-  //         setUser(data.user);
-  //       } else {
-  //         setUser(null); // Handle unauthorized user
-  //       }
-  //     } catch (error) {
-  //       setUser(null);
-
-  //       navigate("/login");
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchUser();
-  // }, []);
 
   const login = async (data: { email: string; password: string }) => {
     const response = await loginApi(data);

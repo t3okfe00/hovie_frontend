@@ -5,10 +5,10 @@ import { FavoritesList } from "../components/FavoritesList";
 import Footer from "@/components/Footer";
 import ReactPaginate from "react-paginate";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchFavorites } from "@/services/favorites";
+import { fetchFavorites, deleteFavorite } from "@/services/favorites";
 import { Favorite } from "@/types";
-import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { QueryClient } from "@tanstack/react-query";
 
 export function ProfilePage() {
   const { userId } = useParams();
@@ -16,6 +16,7 @@ export function ProfilePage() {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [favoritesLoading, setFavoritesLoading] = useState(true);
+  const [favoriteError, setFavoriteError] = useState(false);
 
   const [page, setPage] = useState(1);
 
@@ -36,7 +37,7 @@ export function ProfilePage() {
           setTotalPages(response.totalPages);
         } catch (error) {
           console.error("Failed to fetch favorites:", error);
-          // Optionally, handle error state
+          setFavoriteError(true);
           setFavorites([]);
         } finally {
           setFavoritesLoading(false);
@@ -57,9 +58,17 @@ export function ProfilePage() {
     setPage(data.selected + 1);
   };
 
-  const handleRemove = (id: number) => {
-    // In a real app, this would make an API call to remove the favorite
-    console.log("Removing favorite:", id);
+  const handleRemove = async (id: number) => {
+    try {
+      console.log("Removing favorite with id:", id);
+      await deleteFavorite(id);
+      setFavorites((prev) =>
+        prev.filter((fav: Favorite) => fav.moviesId !== id)
+      );
+      console.log("Favorite removed successfully!");
+    } catch (error) {
+      console.error("Failed to remove favorite:", error);
+    }
   };
 
   if (isLoading) {
