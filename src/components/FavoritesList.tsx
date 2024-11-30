@@ -1,6 +1,6 @@
 import { Heart, Share2, Trash2 } from "lucide-react";
 import { Favorite } from "@/types";
-
+import { Link } from "react-router-dom";
 interface FavoritesListProps {
   favorites: Favorite[];
   isOwner: boolean;
@@ -28,25 +28,20 @@ export function FavoritesList({
           </button>
         )}
       </div>
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <ul className="space-y-4">
+      <div className="flex justify-center">
+        <ul className="space-y-4 w-1/2 bg-slate-200 p-4 rounded-lg shadow-md">
           {favorites.map((item) => (
             <li
-              key={item.id}
-              className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md "
+              key={item.moviesId}
+              className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-lg"
             >
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 ">
-                  {item.movieName}
-                </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="px-2 py-1 text-xs font-medium text-white bg-indigo-600 rounded-full">
-                    {/* {item.type.toUpperCase()} */}
-                  </span>
-                  {/* <span className="text-sm text-gray-500">{item.year}</span> */}
+              <Link to={`/movie/${item.moviesId}`} className="flex-grow">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {item.movieName}
+                  </h3>
                 </div>
-              </div>
+              </Link>
               {isOwner && (
                 <button
                   onClick={() => onRemove?.(item.id)}

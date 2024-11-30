@@ -51,9 +51,7 @@ import Showtimes from "./pages/showtimes";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { ToastContainer } from "react-toastify";
-import { MovieGrid } from "./components/movie-grid";
-import { HeroSection } from "./components/hero-section";
-import { FeatureSection } from "./components/feature-section";
+
 import Chatbot from "./components/Chatbot";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProtectedRoute } from "./pages/ProtectedRoute";
@@ -75,8 +73,7 @@ function App() {
             path="/profiles"
             element={
               <ProtectedRoute>
-                {" "}
-                <ProfilePage />{" "}
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

@@ -10,7 +10,7 @@ import { Favorite } from "@/types";
 
 export function ProfilePage() {
   const { userId } = useParams();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [totalPages, setTotalPages] = useState<number>(1);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [page, setPage] = useState(1);
