@@ -57,10 +57,7 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:flex space-x-6">
-            <Link
-                to="/"
-                className="hover:text-orange-500 transition-colors"
-              >
+              <Link to="/" className="hover:text-orange-500 transition-colors">
                 Home
               </Link>
               <Link
@@ -79,7 +76,7 @@ export default function Navbar() {
                 to="/profiles"
                 className="hover:text-orange-500 transition-colors"
               >
-                Profiles
+                Profile
               </Link>
               <Link
                 to="/groups"

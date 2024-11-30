@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ProfileHeader } from "../components/ProfileHeader";
 import { FavoritesList } from "../components/FavoritesList";
@@ -8,7 +8,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { fetchFavorites, deleteFavorite } from "@/services/favorites";
 import { Favorite } from "@/types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
-import { QueryClient } from "@tanstack/react-query";
 
 export function ProfilePage() {
   const { userId } = useParams();
@@ -83,6 +82,7 @@ export function ProfilePage() {
       {user && <ProfileHeader user={user} isOwner={isOwner} />}
 
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {favoriteError && <h1>Error Loading favorites</h1>}
         {favoritesLoading ? (
           <LoadingSpinner></LoadingSpinner>
         ) : (

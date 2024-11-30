@@ -21,8 +21,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
   const queryClient = useQueryClient(); // Use queryClient to invalidate the cache
 
-  const BACKEND_API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-
   useEffect(() => {
     // Check if user and token are in localStorage on component mount
     const storedUser = localStorage.getItem("user");

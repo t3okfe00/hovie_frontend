@@ -14,9 +14,9 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export function MovieDetails() {
   const { id } = useParams<{ id: string }>();
-  const baseImageUrl = "https://image.tmdb.org/t/p/";
+  const baseImageUrl = import.meta.env.VITE_BASE_IMAGE_URL;
+  const MOVIE_END_POINT_BASE_URL = import.meta.env.VITE_MOVIE_ENDPOINT_BASE_URL;
   const size = "w1280";
-  const BASE_URL = "http://localhost:3000/movie";
 
   // Query for the video
   const {
@@ -26,7 +26,7 @@ export function MovieDetails() {
   } = useQuery({
     queryKey: ["videos", id],
     queryFn: async () => {
-      const response = await fetch(`${BASE_URL}/${id}/videos`);
+      const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}/videos`);
       const data = await response.json();
       console.log("Fetched video data", data.results[0].key);
       return data.results;
@@ -43,7 +43,7 @@ export function MovieDetails() {
   } = useQuery<Movie[]>({
     queryKey: ["similarMovies", id],
     queryFn: async () => {
-      const response = await fetch(`${BASE_URL}/${id}/similar`);
+      const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}/similar`);
       const data = await response.json();
       console.log("Fetched similar movies data", data);
       return data.results;
@@ -60,7 +60,7 @@ export function MovieDetails() {
   } = useQuery<Movie>({
     queryKey: ["movie", id],
     queryFn: async () => {
-      const response = await fetch(`${BASE_URL}/${id}`);
+      const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}`);
       const data = await response.json();
       console.log("Fetched movie data", data);
       return data;
@@ -77,7 +77,7 @@ export function MovieDetails() {
   } = useQuery<MovieCredits>({
     queryKey: ["cast", id],
     queryFn: async () => {
-      const response = await fetch(`${BASE_URL}/${id}/credits`);
+      const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}/credits`);
       const data = await response.json();
       console.log("Fetched cast data", data);
       return data;
