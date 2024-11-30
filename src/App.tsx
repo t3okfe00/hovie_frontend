@@ -43,13 +43,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MoviesPage } from "./pages/movies";
 import { Groups } from "./pages/groups";
 import { GroupPage } from "@/pages/groupPage"; // Import the GroupPage component
-
-import HomePage from "./pages/HomePage"; // This imports your HomePage function
-
+import HomePage from "./pages/HomePage"; // Import HomePage to use in the Router
+import Navbar from "./components/Navbar";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { MovieDetails } from "./pages/moviedetails";
 import Showtimes from "./pages/showtimes";
-import Navbar from "./components/Navbar.tsx";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { ToastContainer } from "react-toastify";
