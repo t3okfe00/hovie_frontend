@@ -21,32 +21,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
   const queryClient = useQueryClient(); // Use queryClient to invalidate the cache
 
-  const BACKEND_API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-
   useEffect(() => {
-    const fetchUser = async () => {
-      console.log("Fetching user on useEffect");
-      try {
-        const response = await fetch(`${BACKEND_API_URL}/user/me`, {
-          credentials: "include",
-        }); // Ensure cookies are sent
-        console.log("Response from fetchUser", response);
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Data from fetchUser", data);
-          setUser(data.user);
-        } else {
-          setUser(null); // Handle unauthorized user
-        }
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Check if user and token are in localStorage on component mount
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-    fetchUser();
+    if (storedUser && storedToken) {
+      setUser(JSON.parse(storedUser)); // Parse and set user from localStorage
+      setToken(storedToken); // Set token from localStorage
+    } else {
+      setUser(null);
+      setToken(null);
+    }
+
+    setIsLoading(false); // Done loading
+
+    // Optionally, you can fetch user data from API to validate if it's still valid, like:
+    // fetchUser();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const response = await fetch(`${BACKEND_API_URL}/user/me`, {
+  //         credentials: "include",
+  //       }); // Ensure cookies are sent
+  //       console.log("Response from fetchUser", response);
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         console.log("Data at USE AUTH", data);
+  //         setUser(data.user);
+  //       } else {
+  //         setUser(null); // Handle unauthorized user
+  //       }
+  //     } catch (error) {
+  //       setUser(null);
+
+  //       navigate("/login");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchUser();
+  // }, []);
 
   const login = async (data: { email: string; password: string }) => {
     const response = await loginApi(data);
@@ -54,6 +73,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     setUser(response.user);
     setToken(response.token);
+
+    localStorage.setItem("user", JSON.stringify(response.user));
+    localStorage.setItem("token", response.token);
   };
 
   const signUp = async (data: {
@@ -75,6 +97,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(null);
         setToken(null);
         queryClient.clear(); // This clears the React Query cache
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         navigate("/login");
       } else {
         console.error("Logout failed:", response.message); // Handle logout failure
