@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Settings, LogOut } from 'lucide-react';
@@ -51,16 +51,6 @@ interface Member {
     joinDate: string;
 }
 
-const roleColors = {
-    owner: 'bg-primary text-primary-foreground',
-    moderator: 'bg-blue-500 text-white',
-    member: 'bg-secondary text-secondary-foreground'
-};
-
-const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
 const userId = 17; // Replace with actual user ID
 const BASE_URL = 'http://localhost:3000'; // Base URL
 
@@ -78,8 +68,28 @@ export function YourGroupCard({ id, name, members, description, category, pictur
             return response.json();
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['yourGroups', userId] }).then(() => {
-                // Optional: Add any additional logic here if needed
+            queryClient.invalidateQueries({ queryKey: ['yourGroups', userId] });
+        },
+    });
+
+    const removeMemberMutation = useMutation({
+        mutationFn: async (memberId: number) => {
+            const response = await fetch(`${BASE_URL}/groups/${id}/members/${memberId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ownerId: isOwner ? userId : null })
+            });
+            if (!response.ok) throw new Error('Failed to remove member');
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['members', id] });
+            toast({
+                title: "Member Removed",
+                description: `Member has been removed from ${name}.`,
+                duration: 3000,
             });
         },
     });
@@ -93,11 +103,11 @@ export function YourGroupCard({ id, name, members, description, category, pictur
     };
 
     const handleLeaveGroup = () => {
-        toast({
-            title: "Left Group",
-            description: `You have successfully left ${name}.`,
-            duration: 3000,
-        });
+        removeMemberMutation.mutate(userId);
+    };
+
+    const handleRemoveMember = (memberId: number) => {
+        removeMemberMutation.mutate(memberId);
     };
 
     const { data: membersData, isLoading, isError } = useQuery<Member[]>({
@@ -187,7 +197,7 @@ export function YourGroupCard({ id, name, members, description, category, pictur
                                                                             <p className="text-xs text-muted-foreground">Joined {member.joinDate}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <Button variant="outline" size="sm">Remove</Button>
+                                                                    <Button variant="outline" size="sm" onClick={() => handleRemoveMember(Number(member.id))}>Remove</Button>
                                                                 </div>
                                                             ) : null
                                                         ))}

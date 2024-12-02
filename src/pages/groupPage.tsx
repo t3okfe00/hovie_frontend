@@ -84,7 +84,7 @@ export function GroupPage({ isOwner = true }: GroupPageProps) {
 
                             <TabsContent value="chat">
                                 <Card className="p-6">
-                                    <GroupChat />
+                                    <GroupChat groupId={groupId} />
                                 </Card>
                             </TabsContent>
 

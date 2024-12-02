@@ -9,17 +9,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Film, Search } from 'lucide-react';
+import { Film } from 'lucide-react';
 import {
     Command,
-    CommandEmpty,
     CommandGroup,
-    CommandInput,
     CommandItem,
     CommandList,
 } from '@/components/ui/command';
-import { Card } from '@/components/ui/card';
 
 // Mock movie data - in a real app, this would come from an API
 const mockMovies = [
@@ -57,11 +55,9 @@ interface MovieSuggestionButtonProps {
 export function MovieSuggestionButton({ onMovieSelect }: MovieSuggestionButtonProps) {
     const [open, setOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-    const [searchOpen, setSearchOpen] = useState(false);
 
     const handleMovieSelect = (movie: Movie) => {
         setSelectedMovie(movie);
-        setSearchOpen(false);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -91,58 +87,51 @@ export function MovieSuggestionButton({ onMovieSelect }: MovieSuggestionButtonPr
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <Label>Search Movie</Label>
-                            <div className="relative">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={searchOpen}
-                                    className="w-full justify-between"
-                                    onClick={() => setSearchOpen(!searchOpen)}
-                                >
+                            <Command className="border rounded-md">
+                                <CommandList>
+                                    <CommandGroup>
+                                        <Input
+                                            placeholder="Search for a movie..."
+                                            className="border-0 focus-visible:ring-0"
+                                        />
+                                    </CommandGroup>
                                     {selectedMovie ? (
-                                        <span className="flex items-center gap-2">
-                      <img
-                          src={selectedMovie.poster}
-                          alt={selectedMovie.title}
-                          className="w-6 h-6 object-cover rounded"
-                      />
-                                            {selectedMovie.title} ({selectedMovie.year})
-                    </span>
+                                        <CommandGroup>
+                                            <CommandItem
+                                                className="flex items-center gap-2 cursor-pointer"
+                                            >
+                                                <img
+                                                    src={selectedMovie.poster}
+                                                    alt={selectedMovie.title}
+                                                    className="w-8 h-8 object-cover rounded"
+                                                />
+                                                <span>
+                          {selectedMovie.title} ({selectedMovie.year})
+                        </span>
+                                            </CommandItem>
+                                        </CommandGroup>
                                     ) : (
-                                        <span className="text-muted-foreground">Search for a movie...</span>
+                                        <CommandGroup>
+                                            {mockMovies.map((movie) => (
+                                                <CommandItem
+                                                    key={movie.id}
+                                                    onSelect={() => handleMovieSelect(movie)}
+                                                    className="flex items-center gap-2 cursor-pointer"
+                                                >
+                                                    <img
+                                                        src={movie.poster}
+                                                        alt={movie.title}
+                                                        className="w-8 h-8 object-cover rounded"
+                                                    />
+                                                    <span>
+                            {movie.title} ({movie.year})
+                          </span>
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
                                     )}
-                                    <Search className="w-4 h-4 ml-2 shrink-0 opacity-50" />
-                                </Button>
-                                {searchOpen && (
-                                    <Card className="absolute top-full mt-1 w-full z-50">
-                                        <Command>
-                                            <CommandInput placeholder="Type to search..." />
-                                            <CommandList>
-                                                <CommandEmpty>No movies found.</CommandEmpty>
-                                                <CommandGroup heading="Suggestions">
-                                                    {mockMovies.map((movie) => (
-                                                        <CommandItem
-                                                            key={movie.id}
-                                                            onSelect={() => handleMovieSelect(movie)}
-                                                            className="flex items-center gap-2 cursor-pointer"
-                                                        >
-                                                            <img
-                                                                src={movie.poster}
-                                                                alt={movie.title}
-                                                                className="w-8 h-8 object-cover rounded"
-                                                            />
-                                                            <span>
-                                {movie.title} ({movie.year})
-                              </span>
-                                                        </CommandItem>
-                                                    ))}
-                                                </CommandGroup>
-                                            </CommandList>
-                                        </Command>
-                                    </Card>
-                                )}
-                            </div>
+                                </CommandList>
+                            </Command>
                         </div>
                     </div>
                     <DialogFooter>
