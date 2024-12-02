@@ -42,7 +42,7 @@ export function Groups() {
             if (!response.ok) throw new Error("Failed to fetch your groups");
             return response.json();
         },
-        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: 0, // Cache for 10 minutes
     });
 
     // Fetching Featured Groups dynamically

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { MovieSuggestionButton } from './movieSuggestionButton';
+import { useToast } from '@/hooks/use-toast';
 
 interface Movie {
     id: string;
@@ -30,57 +32,102 @@ interface Message {
     };
 }
 
-const messages: Message[] = [
-    {
-        id: '1',
-        user: {
-            name: 'Alice Johnson',
-            avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-            role: 'owner'
-        },
-        content: 'Has anyone seen "The Maltese Falcon"?',
-        timestamp: new Date('2024-01-15T14:30:00'),
-        type: 'text'
-    },
-    {
-        id: '2',
-        user: {
-            name: 'Bob Smith',
-            avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100',
-            role: 'member'
-        },
-        content: "Let's watch this together!",
-        timestamp: new Date('2024-01-15T14:32:00'),
-        type: 'movie',
-        movieData: {
-            title: 'Double Indemnity',
-            imageUrl: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=200'
-        }
-    },
-    // Adding more messages to demonstrate scrolling
-    ...Array.from({ length: 10 }, (_, i) => ({
-        id: `${i + 3}`,
-        user: {
-            name: 'Test User',
-            avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100',
-            role: 'member'
-        },
-        content: `Test message ${i + 1} for scroll demonstration`,
-        timestamp: new Date(2024, 0, 15, 14, 32 + i),
-        type: 'text' as const
-    }))
-];
+interface GroupChatProps {
+    groupId: number;
+}
 
-export function GroupChat() {
+export function GroupChat({ groupId }: GroupChatProps) {
+    const userId = 17; // Hardcoded userId
     const [newMessage, setNewMessage] = useState('');
-    const [chatMessages, setChatMessages] = useState(messages);
+    const [chatMessages, setChatMessages] = useState<Message[]>([]);
+    const { toast } = useToast();
+
+    const { data: fetchedMessages, isLoading, isError, error } = useQuery<Message[]>({
+        queryKey: ['groupContent', groupId, userId],
+        queryFn: async () => {
+            const response = await fetch(`http://localhost:3000/groups/${groupId}/contents`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId })
+            });
+            if (!response.ok) throw new Error('Failed to fetch content');
+            const data = await response.json();
+            console.log(data); // Log the response to the console
+            const messages = Array.isArray(data) ? data : [data];
+            return messages.map((item: { content: { id: number; timestamp: string; message: string; movieId: number }; userName: string }) => ({
+                id: item.content.id.toString(),
+                user: {
+                    name: item.userName, // Use userName from the response
+                    avatar: 'https://via.placeholder.com/150', // Mock user avatar
+                    role: 'member' // Mock user role
+                },
+                content: item.content.message,
+                timestamp: new Date(item.content.timestamp),
+                type: item.content.movieId === -1 ? 'text' : 'movie',
+                movieData: item.content.movieId !== -1 ? { title: 'Mock Movie Title', imageUrl: 'https://via.placeholder.com/150' } : undefined // Mock movie data
+            }));
+        },
+        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+    });
+
+    useEffect(() => {
+        if (fetchedMessages) {
+            setChatMessages(fetchedMessages);
+        }
+    }, [fetchedMessages]);
+
+    const addContentMutation = useMutation({
+        mutationFn: async (contentData: { userId: number; message: string }) => {
+            const response = await fetch(`http://localhost:3000/groups/${groupId}/content`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId,
+                    content: -1,
+                    message: contentData.message
+                })
+            });
+            if (!response.ok) throw new Error('Failed to add content');
+            return response.json();
+        },
+        onSuccess: (data) => {
+            const newMessage: Message = {
+                id: data.id.toString(),
+                user: {
+                    name: 'You',
+                    avatar: 'https://via.placeholder.com/150',
+                    role: 'member'
+                },
+                content: data.message,
+                timestamp: new Date(data.timestamp),
+                type: data.movieId === 0 ? 'text' : 'movie',
+                movieData: data.movieId !== 0 ? { title: 'Mock Movie Title', imageUrl: 'https://via.placeholder.com/150' } : undefined
+            };
+            setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+            toast({
+                title: "Content Added",
+                description: "Your message has been added to the group.",
+                duration: 3000,
+            });
+            setNewMessage('');
+        },
+    });
+
+    const handleSendMessage = () => {
+        if (newMessage.trim() === '') return;
+        addContentMutation.mutate({ userId, message: newMessage });
+    };
 
     const handleMovieSelect = (movie: Movie) => {
         const newMovieMessage: Message = {
             id: Date.now().toString(),
             user: {
                 name: 'You',
-                avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100',
+                avatar: 'https://via.placeholder.com/150',
                 role: 'member'
             },
             content: "Check out this movie!",
@@ -91,14 +138,23 @@ export function GroupChat() {
                 imageUrl: movie.poster
             }
         };
-        setChatMessages([...chatMessages, newMovieMessage]);
+        setChatMessages((prevMessages: Message[]) => [...prevMessages, newMovieMessage]);
     };
+
+    if (isLoading) {
+        return <p>Loading messages...</p>;
+    }
+
+    if (isError) {
+        console.error(error);
+        return <p>Failed to load messages. Please try again later.</p>;
+    }
 
     return (
         <div className="flex flex-col h-[600px]">
             <ScrollArea className="flex-1 h-[calc(600px-80px)] overflow-y-auto">
                 <div className="space-y-4 p-4">
-                    {chatMessages.map((message) => (
+                    {chatMessages?.map((message) => (
                         <div key={message.id} className="flex items-start gap-3">
                             <Avatar>
                                 <AvatarImage src={message.user.avatar} />
@@ -108,8 +164,8 @@ export function GroupChat() {
                                 <div className="flex items-center gap-2">
                                     <span className="font-semibold">{message.user.name}</span>
                                     <span className="text-xs text-muted-foreground">
-                    {format(message.timestamp, 'MMM d, h:mm a')}
-                  </span>
+                                        {format(message.timestamp, 'MMM d, h:mm a')}
+                                    </span>
                                 </div>
 
                                 {message.type === 'text' ? (
@@ -142,7 +198,7 @@ export function GroupChat() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <Button>
+                <Button onClick={handleSendMessage}>
                     <Send className="h-4 w-4" />
                 </Button>
             </div>
