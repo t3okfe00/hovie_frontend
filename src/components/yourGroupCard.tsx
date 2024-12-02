@@ -48,7 +48,7 @@ interface Member {
     id: string;
     name: string;
     avatar: string;
-    role: 'owner' | 'moderator' | 'member';
+    role: 'owner' | 'member';
     joinDate: string;
 }
 
@@ -68,7 +68,7 @@ export function YourGroupCard({ id, name, members, description, category, pictur
             if (!response.ok) throw new Error('Failed to delete group');
             return response.json();
         },
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['yourGroups', user?.id] });
         },
     });
