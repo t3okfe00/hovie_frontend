@@ -1,32 +1,23 @@
-import React, { useState } from "react";
-import { Film, MailIcon } from "lucide-react";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { LockClosedIcon, XMarkIcon } from "@heroicons/react/24/outline"; // Correct imports
-import AuthModal from "./AuthModel";
+import { useState } from "react";
+import { Film } from "lucide-react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { LogOut, User } from "lucide-react";
 export default function Navbar() {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const { user, logout, token } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleLoginSuccess = (response) => {
-    console.log("Login Success:", response);
-  };
-
-  const handleLoginFailure = (error) => {
-    console.error("Login Failed:", error);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Email:", email, "Password:", password);
   };
 
   return (
@@ -66,6 +57,12 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:flex space-x-6">
+            <Link
+                to="/"
+                className="hover:text-orange-500 transition-colors"
+              >
+                Home
+              </Link>
               <Link
                 to="/movies"
                 className="hover:text-orange-500 transition-colors"
@@ -79,10 +76,10 @@ export default function Navbar() {
                 Showtimes
               </Link>
               <Link
-                to="/lists"
+                to="/profiles"
                 className="hover:text-orange-500 transition-colors"
               >
-                Lists
+                Profiles
               </Link>
               <Link
                 to="/groups"
@@ -92,123 +89,60 @@ export default function Navbar() {
               </Link>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowLoginModal(true)}
+            <div className="flex items-center gap-4">
+              {user ? (
+                <>
+                  <button
+                    onClick={() => navigate("/profile")}
+                    className="flex items-center gap-2 hover:text-orange-400 transition-colors"
+                  >
+                    <User size={20} />
+                    {user.email}
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 hover:text-orange-400 transition-colors"
+                  >
+                    <LogOut size={20} />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <div className="flex gap-10">
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="hover:text-orange-400 transition-colors"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => navigate("/signup")}
+                    style={{ padding: "0.2rem 0.5rem", borderRadius: "99px" }}
+                    className="hover:bg-orange-400 hover:text-black transition-colors"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* <div className="flex items-center space-x-4">
+              <Link
+                to="/login"
                 className="px-4 py-2 text-sm font-medium text-white hover:text-orange-500 transition-colors"
               >
                 Log in
-              </button>
-              <button
-                onClick={() => setShowSignupModal(true)}
+              </Link>
+              <Link
+                to="/signup"
                 className="px-4 py-2 text-sm font-medium bg-orange-500 rounded-md hover:bg-orange-600 transition-colors"
               >
                 Sign up
-              </button>
-            </div>
+              </Link>
+            </div> */}
           </div>
         </div>
       </nav>
-
-      {/* Login Modal */}
-      {showLoginModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-md w-96 shadow-lg relative">
-            <button
-              onClick={() => setShowLoginModal(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              <XMarkIcon className="h-6 w-6" />
-            </button>
-
-            <h2 className="text-2xl text-gray-700 flex justify-center items-center font-bold mb-4">
-              Login
-            </h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4 relative">
-                <label htmlFor="email" className="block text-sm font-medium">
-                  Email
-                </label>
-                <div className="mt-2 relative">
-                  <MailIcon className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
-                  <input
-                    type="email"
-                    id="email"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 text-gray-800"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="mb-4 relative">
-                <label htmlFor="password" className="block text-sm font-medium">
-                  Password
-                </label>
-                <div className="mt-2 relative">
-                  <LockClosedIcon className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
-                  <input
-                    type="password"
-                    id="password"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 text-gray-800"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-orange-500 text-white py-2 rounded-md hover:bg-blue-600"
-              >
-                Login
-              </button>
-            </form>
-
-            <div className="mt-4">
-              <GoogleLogin
-                onSuccess={handleLoginSuccess}
-                onError={handleLoginFailure}
-                useOneTap
-                shape="pill"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile Menu */}
-      <div
-        className={`md:hidden ${
-          isMenuOpen ? "block" : "hidden"
-        } bg-black/90 absolute top-16 left-0 w-full p-4 z-40`}
-      >
-        <div className="flex flex-col items-start space-y-4 mt-4 px-4">
-          <a href="/movies" className="text-white hover:text-orange-500">
-            Movies
-          </a>
-          <a href="/showtimes" className="text-white hover:text-orange-500">
-            Showtimes
-          </a>
-          <a href="/lists" className="text-white hover:text-orange-500">
-            Lists
-          </a>
-          <a href="/groups" className="text-white hover:text-orange-500">
-            Groups
-          </a>
-        </div>
-      </div>
-
-      {/* Sign Up Modal */}
-      <AuthModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-        type="signup"
-      />
     </GoogleOAuthProvider>
   );
 }

@@ -6,9 +6,10 @@ import "slick-carousel/slick/slick-theme.css";
 import MovieCarousel from "@/components/MovieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import  Footer  from "../components/Footer";
+import Footer from "../components/Footer";
 
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+// const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const API_KEY = 'fcefb9fb4e1f1f86914fa824bf441e7a';
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
@@ -40,7 +41,7 @@ function MovieRow({ title, movies }: { title: string; movies: Movie[] }) {
                   <CardContent className="p-0">
                     {movie.images.length > 0 ? (
                       <img
-                        src={movie.images[0]}
+                        src={movie.images[1]}
                         alt={movie.title}
                         className="w-full h-[150px] sm:h-[200px] md:h-[250px] object-cover transition-all duration-300 group-hover:opacity-80"
                       />
@@ -101,17 +102,17 @@ function HomePage() {
             `${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}`
           );
           const details = await detailsResponse.json();
-          
+
           return {
             id: movie.id,
             title: movie.title,
             images: [
               `${IMAGE_BASE_URL}${movie.backdrop_path}`,
-              `${IMAGE_BASE_URL}${movie.poster_path}`
+              `${IMAGE_BASE_URL}${movie.poster_path}`,
             ].filter(Boolean),
             releaseDate: movie.release_date,
             voteAverage: movie.vote_average,
-            genres: details.genres?.map((g: { name: string }) => g.name) || []
+            genres: details.genres?.map((g: { name: string }) => g.name) || [],
           };
         })
       );
