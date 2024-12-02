@@ -9,7 +9,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import Footer from "../components/Footer";
 
 // const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const API_KEY = 'fcefb9fb4e1f1f86914fa824bf441e7a';
+const API_KEY = "fcefb9fb4e1f1f86914fa824bf441e7a";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
@@ -23,59 +23,62 @@ interface Movie {
 }
 
 function MovieRow({ title, movies }: { title: string; movies: Movie[] }) {
-    // Slice movies to show only the first 6
-    const displayedMovies = movies.slice(0, 6);
-  
-    return (
-      <div className="py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <h3 className="text-xl font-semibold mb-4">{title}</h3>
-          <ScrollArea>
-            {/* Grid layout */}
-            <div className="grid grid-cols-4 md:grid-cols-6 gap-4 pb-4">
-              {displayedMovies.map((movie) => (
-                <Card
-                  key={movie.id}
-                  className="overflow-hidden group cursor-pointer bg-gray-800 text-white transition-transform duration-300 transform hover:scale-105 hover:shadow-lg"
-                >
-                  <CardContent className="p-0">
-                    {movie.images.length > 0 ? (
-                      <img
-                        src={movie.images[1]}
-                        alt={movie.title}
-                        className="w-full h-[150px] sm:h-[200px] md:h-[250px] object-cover transition-all duration-300 group-hover:opacity-80"
-                      />
-                    ) : (
-                      <div className="w-full h-[200px] bg-gray-700 flex items-center justify-center">
-                        <span>No image</span>
-                      </div>
-                    )}
-                    <div className="p-4">
-                      <h3 className="text-lg font-bold truncate">{movie.title}</h3>
-                      <p className="text-sm text-gray-400">{movie.releaseDate}</p>
-                      <p className="text-sm text-yellow-500 mt-2">⭐ {movie.voteAverage?.toFixed(1)}</p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {movie.genres?.map((genre, index) => (
-                          <span
-                            key={index}
-                            className="bg-gray-700 text-xs px-2 py-1 rounded"
-                          >
-                            {genre}
-                          </span>
-                        ))}
-                      </div>
+  // Slice movies to show only the first 6
+  const displayedMovies = movies.slice(0, 6);
+
+  return (
+    <div className="py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <h3 className="text-xl font-semibold mb-4">{title}</h3>
+        <ScrollArea>
+          {/* Grid layout */}
+          <div className="grid grid-cols-4 md:grid-cols-6 gap-4 pb-4">
+            {displayedMovies.map((movie) => (
+              <Card
+                key={movie.id}
+                className="overflow-hidden group cursor-pointer bg-gray-800 text-white transition-transform duration-300 transform hover:scale-105 hover:shadow-lg"
+              >
+                <CardContent className="p-0">
+                  {movie.images.length > 0 ? (
+                    <img
+                      src={movie.images[1]}
+                      alt={movie.title}
+                      className="w-full h-[150px] sm:h-[200px] md:h-[250px] object-cover transition-all duration-300 group-hover:opacity-80"
+                    />
+                  ) : (
+                    <div className="w-full h-[200px] bg-gray-700 flex items-center justify-center">
+                      <span>No image</span>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </div>
+                  )}
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold truncate">
+                      {movie.title}
+                    </h3>
+                    <p className="text-sm text-gray-400">{movie.releaseDate}</p>
+                    <p className="text-sm text-yellow-500 mt-2">
+                      ⭐ {movie.voteAverage?.toFixed(1)}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {movie.genres?.map((genre, index) => (
+                        <span
+                          key={index}
+                          className="bg-gray-700 text-xs px-2 py-1 rounded"
+                        >
+                          {genre}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
-    );
-  }
-  
+    </div>
+  );
+}
 
 function HomePage() {
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
@@ -189,7 +192,6 @@ function HomePage() {
         previousClassName="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
         nextClassName="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
       />
-      <Footer />
     </main>
   );
 }

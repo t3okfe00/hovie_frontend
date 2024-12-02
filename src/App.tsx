@@ -9,6 +9,7 @@ import Showtimes from "./pages/showtimes";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { ToastContainer } from "react-toastify";
+import Footer from "./components/Footer";
 
 import Chatbot from "./components/Chatbot";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -40,6 +41,7 @@ function App() {
         </Routes>
         <ToastContainer />
       </div>
+      <Footer />
       <Chatbot />
     </>
   );
