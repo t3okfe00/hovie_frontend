@@ -8,6 +8,7 @@ import { Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { MovieSuggestionButton } from './movieSuggestionButton';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from "@/hooks/useAuth";
 
 interface Movie {
     id: string;
@@ -37,10 +38,11 @@ interface GroupChatProps {
 }
 
 export function GroupChat({ groupId }: GroupChatProps) {
-    const userId = 17; // Hardcoded userId
     const [newMessage, setNewMessage] = useState('');
     const [chatMessages, setChatMessages] = useState<Message[]>([]);
     const { toast } = useToast();
+    const { user } = useAuth();
+    const userId = user?.id;
 
     const { data: fetchedMessages, isLoading, isError, error } = useQuery<Message[]>({
         queryKey: ['groupContent', groupId, userId],
@@ -54,7 +56,6 @@ export function GroupChat({ groupId }: GroupChatProps) {
             });
             if (!response.ok) throw new Error('Failed to fetch content');
             const data = await response.json();
-            console.log(data); // Log the response to the console
             const messages = Array.isArray(data) ? data : [data];
             return messages.map((item: { content: { id: number; timestamp: string; message: string; movieId: number }; userName: string }) => ({
                 id: item.content.id.toString(),

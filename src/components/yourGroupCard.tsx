@@ -32,6 +32,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from "@/hooks/useAuth";
 
 interface YourGroupCardProps {
     id: number;
@@ -51,13 +52,13 @@ interface Member {
     joinDate: string;
 }
 
-const userId = 17; // Replace with actual user ID
 const BASE_URL = 'http://localhost:3000'; // Base URL
 
 export function YourGroupCard({ id, name, members, description, category, pictureUrl, isOwner }: YourGroupCardProps) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { toast } = useToast();
+    const { user } = useAuth();
 
     const deleteGroupMutation = useMutation({
         mutationFn: async (groupId: number) => {
@@ -68,7 +69,7 @@ export function YourGroupCard({ id, name, members, description, category, pictur
             return response.json();
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['yourGroups', userId] });
+            queryClient.invalidateQueries({ queryKey: ['yourGroups', user?.id] });
         },
     });
 
@@ -79,7 +80,7 @@ export function YourGroupCard({ id, name, members, description, category, pictur
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ownerId: isOwner ? userId : null })
+                body: JSON.stringify({ ownerId: isOwner ? user?.id : null })
             });
             if (!response.ok) throw new Error('Failed to remove member');
             return response.json();
@@ -103,7 +104,7 @@ export function YourGroupCard({ id, name, members, description, category, pictur
     };
 
     const handleLeaveGroup = () => {
-        removeMemberMutation.mutate(userId);
+        removeMemberMutation.mutate(user?.id as number);
     };
 
     const handleRemoveMember = (memberId: number) => {
@@ -118,7 +119,7 @@ export function YourGroupCard({ id, name, members, description, category, pictur
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ userId })
+                body: JSON.stringify({ userId: user?.id })
             });
             if (!response.ok) throw new Error('Failed to fetch members');
             const data = await response.json();

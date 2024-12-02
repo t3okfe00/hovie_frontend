@@ -15,9 +15,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImagePlus, X } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from "@/hooks/useAuth";
 
 const BASE_URL = "http://localhost:3000/groups";
-const userId = 17; // Hardcoded user ID
 
 export function CreateGroupDialog() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -28,6 +28,7 @@ export function CreateGroupDialog() {
     const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const queryClient = useQueryClient();
+    const { user } = useAuth();
 
     const createGroupMutation = useMutation({
         mutationFn: async (formData: FormData) => {
@@ -76,7 +77,7 @@ export function CreateGroupDialog() {
         const capitalizedCategory = category.charAt(0).toUpperCase() + category.slice(1);
         const formData = new FormData();
         formData.append('name', name);
-        formData.append('ownersId', userId.toString());
+        formData.append('ownersId', user?.id.toString());
         formData.append('category', capitalizedCategory);
         formData.append('description', description);
         if (image) {

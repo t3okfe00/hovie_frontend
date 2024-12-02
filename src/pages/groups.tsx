@@ -3,11 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { GroupCard } from "@/components/groupCard";
 import { YourGroupCard } from "@/components/yourGroupCard";
-import { CreateGroupDialog } from "@/components/createGroupDialog.tsx";
+import { CreateGroupDialog } from "@/components/createGroupDialog";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 
 const BASE_URL = "http://localhost:3000/groups";
-const userId = 17; // Hardcoded user ID
 
 interface Group {
     id: number;
@@ -23,6 +23,7 @@ interface Group {
 export function Groups() {
     const [search, setSearch] = useState("");
     const [query, setQuery] = useState("");
+    const { user } = useAuth();
 
     // Fetching Your Groups dynamically
     const {
@@ -30,14 +31,14 @@ export function Groups() {
         isLoading: isLoadingYourGroups,
         isError: isErrorYourGroups,
     } = useQuery<Group[]>({
-        queryKey: ["yourGroups", userId],
+        queryKey: ["yourGroups", user?.id],
         queryFn: async () => {
             const response = await fetch(`${BASE_URL}/yourGroups`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userId }),
+                body: JSON.stringify({ userId: user?.id }),
             });
             if (!response.ok) throw new Error("Failed to fetch your groups");
             return response.json();
@@ -51,14 +52,14 @@ export function Groups() {
         isLoading: isLoadingFeatured,
         isError: isErrorFeatured,
     } = useQuery<Group[]>({
-        queryKey: ["featuredGroups", userId],
+        queryKey: ["featuredGroups", user?.id],
         queryFn: async () => {
             const response = await fetch(`${BASE_URL}/featured`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userId }),
+                body: JSON.stringify({ userId: user?.id }),
             });
             if (!response.ok) throw new Error("Failed to fetch featured groups");
             return response.json();
@@ -72,14 +73,14 @@ export function Groups() {
         isLoading: isLoadingPopular,
         isError: isErrorPopular,
     } = useQuery<Group[]>({
-        queryKey: ["popularGroups", userId],
+        queryKey: ["popularGroups", user?.id],
         queryFn: async () => {
             const response = await fetch(`${BASE_URL}/popular`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userId }),
+                body: JSON.stringify({ userId: user?.id }),
             });
             if (!response.ok) throw new Error("Failed to fetch popular groups");
             return response.json();
@@ -150,7 +151,7 @@ export function Groups() {
                                         {...group}
                                         members={Number(group.members)}
                                         imageUrl={group.profileUrl}
-                                        userId={userId} // Pass the userId prop
+                                        userId={user?.id} // Pass the userId prop
                                     />
                                 ))}
                             </div>
@@ -175,7 +176,7 @@ export function Groups() {
                                                 {...group}
                                                 members={Number(group.members)}
                                                 imageUrl={group.profileUrl}
-                                                isOwner={group.ownersId === userId}
+                                                isOwner={group.ownersId === user?.id}
                                             />
                                         ))}
                                     </div>
@@ -199,7 +200,7 @@ export function Groups() {
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
-                                            userId={userId} // Pass the userId prop
+                                            userId={user?.id} // Pass the userId prop
                                         />
                                     ))}
                                 </div>
@@ -220,7 +221,7 @@ export function Groups() {
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
-                                            userId={userId} // Pass the userId prop
+                                            userId={user?.id} // Pass the userId prop
                                         />
                                     ))}
                                 </div>

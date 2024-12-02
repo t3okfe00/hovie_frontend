@@ -3,6 +3,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Check, X, UserPlus } from 'lucide-react';
+import { useAuth } from "@/hooks/useAuth";
 import {
     Dialog,
     DialogContent,
@@ -26,15 +27,16 @@ interface JoinRequest {
 }
 
 const BASE_URL = 'http://localhost:3000';
-const userId = 17; // Hardcoded user ID
 
 export function JoinRequestsDialog() {
     const { id } = useParams<{ id: string }>();
     const [requests, setRequests] = useState<JoinRequest[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { user } = useAuth();
 
     const fetchJoinRequests = async () => {
         try {
+            const userId = user?.id;
             const response = await fetch(`${BASE_URL}/groups/${id}/joinrequests`, {
                 method: 'POST',
                 headers: {
@@ -65,7 +67,7 @@ export function JoinRequestsDialog() {
     };
 
     const handleAccept = async (requestId: string, userId: string) => {
-        const requestBody = { userId, ownerId: 17 }; // Replace with actual ownerId
+        const requestBody = { userId, ownerId: user?.id }; // Replace with actual ownerId
         try {
             const response = await fetch(`${BASE_URL}/groups/${id}/addmembers`, {
                 method: 'POST',
@@ -82,7 +84,7 @@ export function JoinRequestsDialog() {
     };
 
     const handleDecline = async (requestId: string, userId: string) => {
-        const requestBody = { userId, ownerId: 17 }; // Replace with actual ownerId
+        const requestBody = { userId, ownerId: user?.id }; // Replace with actual ownerId
         try {
             const response = await fetch(`${BASE_URL}/groups/${id}/declineJoinRequest`, {
                 method: 'POST',

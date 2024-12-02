@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from "@/hooks/useAuth";
 import {
     Dialog,
     DialogContent,
@@ -25,10 +26,10 @@ interface GroupCardProps {
 }
 
 const BASE_URL = 'http://localhost:3000';
-const userId = 17; // Hardcoded user ID
 
 export function GroupCard({ id, name, members = 0, description, category, pictureUrl, ownersId }: GroupCardProps) {
-    const isOwner = ownersId === userId;
+    const { user } = useAuth();
+    const isOwner = ownersId === user?.id;
     useToast();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
@@ -36,6 +37,7 @@ export function GroupCard({ id, name, members = 0, description, category, pictur
 
     const handleJoinGroup = async () => {
         try {
+            const userId = user?.id;
             const response = await fetch(`${BASE_URL}/groups/${id}/join`, {
                 method: 'POST',
                 headers: {

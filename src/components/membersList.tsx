@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from "@/hooks/useAuth";
 
 interface Member {
     id: string;
@@ -24,7 +25,8 @@ const capitalizeFirstLetter = (string: string) => {
 
 export function MembersList() {
     const { id } = useParams<{ id: string }>();
-    const userId = 17; // Hardcoded userId
+    const { user } = useAuth();
+    const userId = user?.id;
 
     const { data: members, isLoading, isError } = useQuery<Member[]>({
         queryKey: ['members', id],
