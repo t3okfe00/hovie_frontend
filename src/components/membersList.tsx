@@ -24,7 +24,7 @@ const capitalizeFirstLetter = (string: string) => {
 
 export function MembersList() {
     const { id } = useParams<{ id: string }>();
-    const userId = 9; // Hardcoded userId
+    const userId = 17; // Hardcoded userId
 
     const { data: members, isLoading, isError } = useQuery<Member[]>({
         queryKey: ['members', id],
@@ -39,9 +39,9 @@ export function MembersList() {
             if (!response.ok) throw new Error('Failed to fetch members');
             const data = await response.json();
             // Transform the data to match the expected structure
-            return data.map((member: { usersId: number; role: string }) => ({
+            return data.map((member: { usersId: number; userName: string; role: string }) => ({
                 id: member.usersId.toString(),
-                name: `User ${member.usersId}`, // Replace with actual user name if available
+                name: member.userName, // Use the actual user name
                 avatar: '', // Replace with actual avatar URL if available
                 role: member.role as 'owner' | 'moderator' | 'member',
                 joinDate: 'Jan 2024' // Replace with actual join date if available

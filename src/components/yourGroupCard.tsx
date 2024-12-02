@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Settings, LogOut } from 'lucide-react';
@@ -8,7 +8,6 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -30,7 +29,9 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface YourGroupCardProps {
     id: number;
@@ -42,7 +43,25 @@ interface YourGroupCardProps {
     isOwner: boolean;
 }
 
-const userId = 9; // Replace with actual user ID
+interface Member {
+    id: string;
+    name: string;
+    avatar: string;
+    role: 'owner' | 'moderator' | 'member';
+    joinDate: string;
+}
+
+const roleColors = {
+    owner: 'bg-primary text-primary-foreground',
+    moderator: 'bg-blue-500 text-white',
+    member: 'bg-secondary text-secondary-foreground'
+};
+
+const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+const userId = 17; // Replace with actual user ID
 const BASE_URL = 'http://localhost:3000'; // Base URL
 
 export function YourGroupCard({ id, name, members, description, category, pictureUrl, isOwner }: YourGroupCardProps) {
@@ -80,6 +99,31 @@ export function YourGroupCard({ id, name, members, description, category, pictur
             duration: 3000,
         });
     };
+
+    const { data: membersData, isLoading, isError } = useQuery<Member[]>({
+        queryKey: ['members', id],
+        queryFn: async () => {
+            const response = await fetch(`${BASE_URL}/groups/${id}/members`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId })
+            });
+            if (!response.ok) throw new Error('Failed to fetch members');
+            const data = await response.json();
+            return data
+                .filter((member: { role: string }) => member.role !== 'owner')
+                .map((member: { usersId: number; userName: string; role: string }) => ({
+                    id: member.usersId.toString(),
+                    name: member.userName,
+                    avatar: '', // Replace with actual avatar URL if available
+                    role: member.role as 'moderator' | 'member',
+                    joinDate: 'Jan 2024' // Replace with actual join date if available
+                }));
+        },
+        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+    });
 
     return (
         <Card className="overflow-hidden transition-all hover:shadow-lg border-border/40 flex flex-col justify-between">
@@ -123,23 +167,34 @@ export function YourGroupCard({ id, name, members, description, category, pictur
                                             </DialogDescription>
                                         </DialogHeader>
                                         <div className="max-h-[400px] overflow-y-auto">
-                                            {/* Example member list */}
-                                            {Array.from({ length: 5 }).map((_, i) => (
-                                                <div key={i} className="flex items-center justify-between py-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-8 h-8 rounded-full bg-secondary" />
-                                                        <div>
-                                                            <p className="text-sm font-medium">Member {i + 1}</p>
-                                                            <p className="text-xs text-muted-foreground">Joined Jan 2024</p>
-                                                        </div>
+                                            {isLoading ? (
+                                                <p>Loading members...</p>
+                                            ) : isError ? (
+                                                <p>Failed to load members. Please try again later.</p>
+                                            ) : (
+                                                <ScrollArea className="h-[400px] overflow-y-auto">
+                                                    <div className="space-y-4 pr-4">
+                                                        {membersData?.map((member) => (
+                                                            member && member.name ? (
+                                                                <div key={member.id} className="flex items-center justify-between py-2">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Avatar>
+                                                                            <AvatarImage src={member.avatar} />
+                                                                            <AvatarFallback>{member.name[0]}</AvatarFallback>
+                                                                        </Avatar>
+                                                                        <div>
+                                                                            <p className="text-sm font-medium">{member.name}</p>
+                                                                            <p className="text-xs text-muted-foreground">Joined {member.joinDate}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <Button variant="outline" size="sm">Remove</Button>
+                                                                </div>
+                                                            ) : null
+                                                        ))}
                                                     </div>
-                                                    <Button variant="outline" size="sm">Remove</Button>
-                                                </div>
-                                            ))}
+                                                </ScrollArea>
+                                            )}
                                         </div>
-                                        <DialogFooter>
-                                            <Button type="button">Save Changes</Button>
-                                        </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
                                 <DropdownMenuItem className="text-destructive" onClick={handleDelete}>
