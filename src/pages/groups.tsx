@@ -52,14 +52,13 @@ export function Groups() {
         isLoading: isLoadingFeatured,
         isError: isErrorFeatured,
     } = useQuery<Group[]>({
-        queryKey: ["featuredGroups", user?.id],
+        queryKey: ["featuredGroups"],
         queryFn: async () => {
             const response = await fetch(`${BASE_URL}/featured`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userId: user?.id }),
             });
             if (!response.ok) throw new Error("Failed to fetch featured groups");
             return response.json();
@@ -73,14 +72,13 @@ export function Groups() {
         isLoading: isLoadingPopular,
         isError: isErrorPopular,
     } = useQuery<Group[]>({
-        queryKey: ["popularGroups", user?.id],
+        queryKey: ["popularGroups"],
         queryFn: async () => {
             const response = await fetch(`${BASE_URL}/popular`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userId: user?.id }),
             });
             if (!response.ok) throw new Error("Failed to fetch popular groups");
             return response.json();
@@ -133,7 +131,7 @@ export function Groups() {
                             className="pl-10"
                         />
                     </form>
-                    <CreateGroupDialog />
+                    {user && <CreateGroupDialog />}
                 </div>
 
                 {query ? (

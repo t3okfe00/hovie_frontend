@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Users, Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import {
     Dialog,
     DialogContent,
@@ -57,7 +56,6 @@ const BASE_URL = 'http://localhost:3000'; // Base URL
 export function YourGroupCard({ id, name, members, description, category, pictureUrl, isOwner }: YourGroupCardProps) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { toast } = useToast();
     const { user } = useAuth();
 
     const deleteGroupMutation = useMutation({
@@ -85,13 +83,8 @@ export function YourGroupCard({ id, name, members, description, category, pictur
             if (!response.ok) throw new Error('Failed to remove member');
             return response.json();
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['members', id] });
-            toast({
-                title: "Member Removed",
-                description: `Member has been removed from ${name}.`,
-                duration: 3000,
-            });
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['yourGroups', user?.id] });
         },
     });
 

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { MovieSuggestionButton } from './movieSuggestionButton';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from "@/hooks/useAuth";
 
 interface Movie {
@@ -40,9 +39,9 @@ interface GroupChatProps {
 export function GroupChat({ groupId }: GroupChatProps) {
     const [newMessage, setNewMessage] = useState('');
     const [chatMessages, setChatMessages] = useState<Message[]>([]);
-    const { toast } = useToast();
     const { user } = useAuth();
-    const userId = user?.id;
+    const userId = user?.id ?? 0; // Provide a default value for userId
+    const queryClient = useQueryClient();
 
     const { data: fetchedMessages, isLoading, isError, error } = useQuery<Message[]>({
         queryKey: ['groupContent', groupId, userId],
@@ -70,7 +69,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
                 movieData: item.content.movieId !== -1 ? { title: 'Mock Movie Title', imageUrl: 'https://via.placeholder.com/150' } : undefined // Mock movie data
             }));
         },
-        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: 0, // Cache for 10 minutes
     });
 
     useEffect(() => {
@@ -95,25 +94,8 @@ export function GroupChat({ groupId }: GroupChatProps) {
             if (!response.ok) throw new Error('Failed to add content');
             return response.json();
         },
-        onSuccess: (data) => {
-            const newMessage: Message = {
-                id: data.id.toString(),
-                user: {
-                    name: 'You',
-                    avatar: 'https://via.placeholder.com/150',
-                    role: 'member'
-                },
-                content: data.message,
-                timestamp: new Date(data.timestamp),
-                type: data.movieId === 0 ? 'text' : 'movie',
-                movieData: data.movieId !== 0 ? { title: 'Mock Movie Title', imageUrl: 'https://via.placeholder.com/150' } : undefined
-            };
-            setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-            toast({
-                title: "Content Added",
-                description: "Your message has been added to the group.",
-                duration: 3000,
-            });
+        onSettled: () => {
+            queryClient.invalidateQueries(['groupContent', groupId, userId]);
             setNewMessage('');
         },
     });
