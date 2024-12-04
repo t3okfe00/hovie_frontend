@@ -6,12 +6,11 @@ import "slick-carousel/slick/slick-theme.css";
 import MovieCarousel from "@/components/MovieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import Footer from "../components/Footer";
 
-// const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const API_KEY = "fcefb9fb4e1f1f86914fa824bf441e7a";
-const BASE_URL = "https://api.themoviedb.org/3";
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
+const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
+const IMAGE_BASE_URL = import.meta.env.VITE_ORIGINAL_IMAGE_URL;
 
 interface Movie {
   id: number;

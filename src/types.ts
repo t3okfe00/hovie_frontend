@@ -238,3 +238,10 @@ export interface Favorite {
   moviesId: number; // The ID of the movie
   movieName: string; // The name of the movie
 }
+
+export interface Review {
+  id: number;
+  username: string;
+  rating: number;
+  comment: string;
+}

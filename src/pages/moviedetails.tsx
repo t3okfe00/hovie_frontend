@@ -1,19 +1,19 @@
 import { useParams } from "react-router-dom";
 
 import { Movie, MovieCredits } from "@/types";
-import { Card, CardContent } from "@/components/ui/card";
 import MoviePlayer from "@/components/common/MoviePlayer";
 import MovieOverview from "@/components/common/MovieOverview";
 import MovieHeading from "@/components/common/MovieHeading";
 import CastCarousel from "@/components/common/CastCarousel";
-import { Star } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
 import RecommendedMovies from "@/components/common/RecommendedMovies";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import Reviews from "@/components/common/Reviews";
 
 export function MovieDetails() {
   const { id } = useParams<{ id: string }>();
+
   const baseImageUrl = import.meta.env.VITE_BASE_IMAGE_URL;
   const MOVIE_END_POINT_BASE_URL = import.meta.env.VITE_MOVIE_ENDPOINT_BASE_URL;
   const size = "w1280";
@@ -128,38 +128,7 @@ export function MovieDetails() {
             />
 
             {/* Reviews Section */}
-            <div>
-              <h2 className="mb-4 text-lg font-semibold sm:text-xl">Reviews</h2>
-              <div className="space-y-4">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <Card key={index} className="border-0 bg-gray-900">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-800 sm:h-12 sm:w-12">
-                          <img
-                            src="/placeholder.svg"
-                            alt="User Avatar"
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <div className="font-medium">User Name</div>
-                          <div className="flex items-center gap-2">
-                            <Star className="h-4 w-4 fill-orange-500 text-orange-500" />
-                            <span className="text-sm text-gray-400">4.5</span>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="mt-4 text-sm text-gray-300 sm:text-base">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua.
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+            <Reviews movieId={movie.id} reviewsEndpoint="sdaf"></Reviews>
           </div>
 
           {/*Recommendations */}
