@@ -28,7 +28,6 @@ export function MovieDetails() {
     queryFn: async () => {
       const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}/videos`);
       const data = await response.json();
-      console.log("Fetched video data", data.results[0].key);
       return data.results;
     },
     staleTime: 1000 * 60 * 20, // 20 minutes
@@ -45,7 +44,6 @@ export function MovieDetails() {
     queryFn: async () => {
       const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}/similar`);
       const data = await response.json();
-      console.log("Fetched similar movies data", data);
       return data.results;
     },
     staleTime: 1000 * 60 * 20, // 20 minutes
@@ -62,7 +60,6 @@ export function MovieDetails() {
     queryFn: async () => {
       const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}`);
       const data = await response.json();
-      console.log("Fetched movie data", data);
       return data;
     },
     staleTime: 1000 * 60 * 20, // 20 minutes
@@ -79,7 +76,6 @@ export function MovieDetails() {
     queryFn: async () => {
       const response = await fetch(`${MOVIE_END_POINT_BASE_URL}/${id}/credits`);
       const data = await response.json();
-      console.log("Fetched cast data", data);
       return data;
     },
     staleTime: 1000 * 60 * 20, // 20 minutes
@@ -128,7 +124,7 @@ export function MovieDetails() {
             />
 
             {/* Reviews Section */}
-            <Reviews movieId={movie.id} reviewsEndpoint="sdaf"></Reviews>
+            <Reviews movieId={movie.id}></Reviews>
           </div>
 
           {/*Recommendations */}

@@ -243,5 +243,10 @@ export interface Review {
   id: number;
   username: string;
   rating: number;
+  description: string;
+}
+
+export interface reviewData {
+  rating: number;
   comment: string;
 }

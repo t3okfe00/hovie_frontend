@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 const apiClient = async (url: string, options: RequestInit) => {
   const response = await fetch(url, {
     ...options,
@@ -16,9 +18,14 @@ const apiClient = async (url: string, options: RequestInit) => {
       responseBody.error || "Network response was not ok"
     );
     console.log("**** RES BODY ****", responseBody);
+    if (responseBody.error == "Unauthorized") {
+      toast.error("You need to be signed in to leave a review!");
+    }
+    toast.error(responseBody.error);
     (error as any).status = response.status; // Attach HTTP status code
     throw error;
   }
+  toast.success(responseBody.message);
 
   return responseBody;
 };

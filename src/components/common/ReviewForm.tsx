@@ -8,11 +8,7 @@ type ReviewFormProps = {
   onReviewSubmit: (review: { rating: number; comment: string }) => void;
 };
 
-const ReviewForm: React.FC<ReviewFormProps> = ({
-  movieId,
-  reviewsEndpoint,
-  onReviewSubmit,
-}) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ onReviewSubmit }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
@@ -78,6 +74,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           size="sm"
           disabled={rating === 0 || !comment.trim()}
           className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md disabled:opacity-50"
+          onClick={handleSubmit}
         >
           Submit Review
         </Button>

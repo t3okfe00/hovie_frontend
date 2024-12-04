@@ -50,7 +50,6 @@ export function MoviesPage() {
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      console.log("Fetched genres", data);
       return data;
     },
     staleTime: 1000 * 60 * 20, // 5 minutes
