@@ -241,9 +241,10 @@ export interface Favorite {
 
 export interface Review {
   id: number;
-  username: string;
+  userName: string;
   rating: number;
   description: string;
+  usersId: number;
 }
 
 export interface reviewData {

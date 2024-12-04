@@ -74,7 +74,8 @@ const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
                   />
                 </div>
                 <div>
-                  <div className="font-medium">{review.username}</div>
+                  <div className="font-medium">{review.userName}</div>
+
                   <div className="flex items-center gap-2">
                     <Star className="h-4 w-4 fill-orange-500 text-orange-500" />
                     <span className="text-sm text-gray-400">
