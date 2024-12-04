@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import MovieCarousel from "@/components/MovieCarousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Link } from "react-router-dom";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -33,43 +34,47 @@ function MovieRow({ title, movies }: { title: string; movies: Movie[] }) {
           {/* Grid layout */}
           <div className="grid grid-cols-4 md:grid-cols-6 gap-4 pb-4">
             {displayedMovies.map((movie) => (
-              <Card
-                key={movie.id}
-                className="overflow-hidden group cursor-pointer bg-gray-800 text-white transition-transform duration-300 transform hover:scale-105 hover:shadow-lg"
-              >
-                <CardContent className="p-0">
-                  {movie.images.length > 0 ? (
-                    <img
-                      src={movie.images[1]}
-                      alt={movie.title}
-                      className="w-full h-[150px] sm:h-[200px] md:h-[250px] object-cover transition-all duration-300 group-hover:opacity-80"
-                    />
-                  ) : (
-                    <div className="w-full h-[200px] bg-gray-700 flex items-center justify-center">
-                      <span>No image</span>
+              <Link to={`/movie/${movie.id}`} key={movie.id}>
+                <Card
+                  key={movie.id}
+                  className="overflow-hidden group cursor-pointer bg-gray-800 text-white transition-transform duration-300 transform hover:scale-105 hover:shadow-lg"
+                >
+                  <CardContent className="p-0">
+                    {movie.images.length > 0 ? (
+                      <img
+                        src={movie.images[1]}
+                        alt={movie.title}
+                        className="w-full h-[150px] sm:h-[200px] md:h-[250px] object-cover transition-all duration-300 group-hover:opacity-80"
+                      />
+                    ) : (
+                      <div className="w-full h-[200px] bg-gray-700 flex items-center justify-center">
+                        <span>No image</span>
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold truncate">
+                        {movie.title}
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        {movie.releaseDate}
+                      </p>
+                      <p className="text-sm text-yellow-500 mt-2">
+                        ⭐ {movie.voteAverage?.toFixed(1)}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {movie.genres?.map((genre, index) => (
+                          <span
+                            key={index}
+                            className="bg-gray-700 text-xs px-2 py-1 rounded"
+                          >
+                            {genre}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  )}
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold truncate">
-                      {movie.title}
-                    </h3>
-                    <p className="text-sm text-gray-400">{movie.releaseDate}</p>
-                    <p className="text-sm text-yellow-500 mt-2">
-                      ⭐ {movie.voteAverage?.toFixed(1)}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {movie.genres?.map((genre, index) => (
-                        <span
-                          key={index}
-                          className="bg-gray-700 text-xs px-2 py-1 rounded"
-                        >
-                          {genre}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
           <ScrollBar orientation="horizontal" />
