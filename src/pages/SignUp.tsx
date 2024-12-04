@@ -5,6 +5,7 @@ import AuthInput from "@/components/common/auth/AuthInput";
 import AuthButton from "@/components/common/auth/AuthButton";
 import { UserPlus } from "lucide-react";
 import { User } from "@/types";
+import { toast } from "react-toastify";
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState("");
@@ -25,7 +26,7 @@ const SignUp: React.FC = () => {
       const res: User = await auth?.signUp({ name, email, password });
       console.log("Response after SignUp", res);
       alert("Sign up successful!, Created User with email: " + res.email);
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       console.log("Error in SignUp", err);
       setError(err instanceof Error ? err.message : "Failed to sign up");

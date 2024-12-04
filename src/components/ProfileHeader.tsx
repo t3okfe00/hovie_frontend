@@ -1,4 +1,6 @@
 import type { User } from "../types";
+import { Button } from "./ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ProfileHeaderProps {
   user: User | null;
@@ -7,7 +9,16 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ user }: ProfileHeaderProps) {
   console.log("User in PROFILE HEADER", user);
+  const { deleteAcc } = useAuth();
 
+  const handleDeleteAccount = async () => {
+    console.log("Delete Account Request-");
+    try {
+      await deleteAcc();
+    } catch (error) {
+      console.error("Error deleting account", error);
+    }
+  };
   return (
     <div className="relative">
       <div className="h-32 bg-gradient-to-r from-orange-500 to-orange-600" />
@@ -18,10 +29,9 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
               <h1 className="text-2xl font-bold text-gray-900 truncate mt-16">
                 {user?.name || "User!"}'s Collection
               </h1>
-              {/* <p className="text-sm text-gray-500">
-                {user.favorites.length}{" "}
-                {user.favorites.length === 1 ? "favorite" : "favorites"}
-              </p> */}
+              <Button variant="destructive" onClick={handleDeleteAccount}>
+                Delete Account
+              </Button>
             </div>
           </div>
         </div>

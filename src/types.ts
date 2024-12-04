@@ -16,6 +16,7 @@ export type AuthContextType = {
     password: string;
   }) => Promise<User>;
   logout: () => void;
+  deleteAcc: () => void;
   token: string | null;
   isLoading: boolean;
   isError: boolean;

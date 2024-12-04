@@ -5,6 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 const ReviewsList = ({ reviews }: { reviews: Review[] }) => {
   return (
     <div>
+      {reviews?.length === 0 && (
+        <div className="text-gray-300 text-center">
+          No reviews... Be first one to review this movie!
+        </div>
+      )}
       {reviews?.map((review: Review) => (
         <Card key={review.id} className="border-0 bg-gray-900">
           <CardContent className="p-4">

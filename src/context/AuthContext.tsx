@@ -7,6 +7,7 @@ import {
   login as loginApi,
   signUp as signUpApi,
   logout as logOut,
+  deleteAccount,
 } from "@/api/authApi";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -81,9 +82,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const deleteAcc = async () => {
+    try {
+      const deleteAcc = await deleteAccount();
+      if (deleteAcc.success) {
+        console.log("Account Deleted");
+        setUser(null);
+        setToken(null);
+        queryClient.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        console.error("Account Deletion failed:", deleteAcc.message);
+      }
+    } catch (error) {
+      console.error("Error deleting account", error);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, signUp, isLoading, isError }}
+      value={{
+        user,
+        token,
+        login,
+        logout,
+        signUp,
+        isLoading,
+        isError,
+        deleteAcc,
+      }}
     >
       {children}
     </AuthContext.Provider>
