@@ -20,6 +20,7 @@ export default function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const userendpoint = user?.profileUrl;
   return (
     <GoogleOAuthProvider clientId="your-google-client-id">
       <nav className="bg-black text-white shadow-lg fixed w-full top-0 z-50">
@@ -73,7 +74,7 @@ export default function Navbar() {
                 Showtimes
               </Link>
               <Link
-                to="/profiles"
+                to={`/profiles${userendpoint}`}
                 className="hover:text-orange-500 transition-colors"
               >
                 Profile
