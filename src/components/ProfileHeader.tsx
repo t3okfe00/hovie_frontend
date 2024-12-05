@@ -1,4 +1,8 @@
 import type { User } from "../types";
+import { Button } from "./ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
+import ConfirmationModal from "./common/ConfirmModal";
 
 interface ProfileHeaderProps {
   user: User | null;
@@ -7,7 +11,25 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ user }: ProfileHeaderProps) {
   console.log("User in PROFILE HEADER", user);
+  const { deleteAcc } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleDeleteAccount = async () => {
+    console.log("Delete Account Request-");
+    try {
+      await deleteAcc();
+      setIsModalOpen(false); // Close the modal after successful deletion
+    } catch (error) {
+      console.error("Error deleting account", error);
+    }
+  };
+  const openModal = () => {
+    setIsModalOpen(true); // Open the confirmation modal
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal if the user cancels
+  };
   return (
     <div className="relative">
       <div className="h-32 bg-gradient-to-r from-orange-500 to-orange-600" />
@@ -18,12 +40,16 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
               <h1 className="text-2xl font-bold text-gray-900 truncate mt-16">
                 {user?.name || "User!"}'s Collection
               </h1>
-              {/* <p className="text-sm text-gray-500">
-                {user.favorites.length}{" "}
-                {user.favorites.length === 1 ? "favorite" : "favorites"}
-              </p> */}
+              <Button variant="destructive" onClick={openModal}>
+                Delete Account
+              </Button>
             </div>
           </div>
+          <ConfirmationModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onConfirm={handleDeleteAccount}
+          />
         </div>
       </div>
     </div>

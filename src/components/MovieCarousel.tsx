@@ -1,7 +1,8 @@
-import React from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { Link } from "react-router-dom";
 
 interface MovieCarouselProps {
   movies: Array<{
@@ -12,7 +13,10 @@ interface MovieCarouselProps {
   isLoading: boolean;
 }
 
-const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies = [], isLoading = false }) => {
+const MovieCarousel: React.FC<MovieCarouselProps> = ({
+  movies = [],
+  isLoading = false,
+}) => {
   const settings = {
     dots: true,
     infinite: movies.length > 1,
@@ -25,7 +29,7 @@ const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies = [], isLoading = 
     adaptiveHeight: true,
     pauseOnHover: true,
     arrows: true,
-    dotsClass: "slick-dots custom-dots"
+    dotsClass: "slick-dots custom-dots",
   };
 
   if (isLoading) {
@@ -42,7 +46,9 @@ const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies = [], isLoading = 
     return (
       <div className="w-full mx-auto my-8">
         <div className="w-full h-[600px] flex items-center justify-center bg-gray-100">
-          <p className="text-gray-500 text-xl">No movies available at the moment.</p>
+          <p className="text-gray-500 text-xl">
+            No movies available at the moment.
+          </p>
         </div>
       </div>
     );
@@ -88,21 +94,29 @@ const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies = [], isLoading = 
           <div key={movie.id}>
             <div className="relative ">
               <img
-                src={movie.images[0] || 'https://via.placeholder.com/1920x1080?text=No+Image+Available'}
+                src={
+                  movie.images[0] ||
+                  "https://via.placeholder.com/1920x1080?text=No+Image+Available"
+                }
                 alt={movie.title}
                 className="w-full h-[650px]  object-cover"
                 loading="lazy"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent h-2/5 p-8">
                 <div className="absolute bottom-16 left-8 right-8">
-                  <h3 className="text-white text-4xl font-bold mb-4">{movie.title}</h3>
+                  <h3 className="text-white text-4xl font-bold mb-4">
+                    {movie.title}
+                  </h3>
                   <div className="flex gap-4">
                     {/* <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
                       Watch Now
                     </button> */}
-                    <button className="bg-gray-600 bg-opacity-60 text-white px-8 py-3 rounded-lg font-semibold hover:bg-opacity-70 transition-all">
-                      More Info
-                    </button>
+
+                    <Link to={`/movie/${movie.id}`}>
+                      <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
+                        More Info
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

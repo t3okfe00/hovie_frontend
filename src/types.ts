@@ -16,6 +16,7 @@ export type AuthContextType = {
     password: string;
   }) => Promise<User>;
   logout: () => void;
+  deleteAcc: () => void;
   token: string | null;
   isLoading: boolean;
   isError: boolean;
@@ -237,4 +238,18 @@ export interface Favorite {
   usersId: number; // The ID of the user who added the movie to their favorites
   moviesId: number; // The ID of the movie
   movieName: string; // The name of the movie
+}
+
+export interface Review {
+  id: number;
+  userName: string;
+  rating: number;
+  description: string;
+  usersId: number;
+  createdAt: string;
+}
+
+export interface reviewData {
+  rating: number;
+  comment: string;
 }

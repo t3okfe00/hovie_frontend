@@ -67,3 +67,26 @@ export const logout = async () => {
     return { success: false, message: "Error logging out" };
   }
 };
+
+export const deleteAccount = async () => {
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/user/delete`, {
+      method: "DELETE",
+      credentials: "include", // Ensure cookies are sent
+    });
+
+    if (response.ok) {
+      console.log("Account deleted successfully");
+
+      return { success: true, message: "Account deleted successfully" };
+      // Redirect to login or homepage
+      // window.location.href = "/login"; // Or use react-router to navigate
+    } else {
+      console.error("Failed to delete account");
+      return { success: false, message: "Failed to delete account" };
+    }
+  } catch (error) {
+    console.error("Error deleting account", error);
+    return { success: false, message: "Error deleting account" };
+  }
+};

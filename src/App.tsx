@@ -29,7 +29,7 @@ function App() {
           <Route path="/groups" element={<Groups />} />
           <Route path="/group/:id" element={<GroupPage />} />
           <Route
-            path="/profiles"
+            path="/profiles/users/:userendpoint"
             element={
               <ProtectedRoute>
                 <ProfilePage />
