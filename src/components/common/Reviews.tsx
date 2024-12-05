@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
 import ReviewForm from "./ReviewForm";
-import { submitReview } from "@/services/reviews";
-import { fetchReviews } from "@/services/reviews";
+import { submitReview, fetchReviews, deleteReviews } from "@/services/reviews";
 import { MoviesPagination } from "./MoviesPagination";
 import { Review } from "@/types";
+
 import ReviewsList from "./ReviewsList";
 type ReviewsProps = {
   movieId: number;
@@ -13,7 +13,7 @@ type ReviewsProps = {
 const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
   const [page, setPage] = useState(1); // Current page state
   const [totalPages, setTotalPages] = useState(1); // Total pages state
-  const [reviews, setReviews] = useState([]); // Reviews state
+  const [reviews, setReviews] = useState<Review[]>([]); // Reviews state
   const [isReviewsLoading, setIsReviewsLoading] = useState(false); // Reviews loading state
 
   useEffect(() => {
@@ -33,6 +33,18 @@ const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
 
     getReviews();
   }, [movieId, page]); // Re-fetch reviews when page or movieId changes
+
+  const handleDeleteReview = async (reviewId: number) => {
+    try {
+      const deleted = await deleteReviews(reviewId); // Delete review
+      console.log("DELETED", deleted);
+      setReviews((prevReviews: Review[]) =>
+        prevReviews.filter((review) => review.id !== reviewId)
+      ); // Remove the review from the list
+    } catch (error) {
+      console.error("Failed to delete review", error);
+    }
+  };
 
   const onReviewSubmit = async (reviewData: {
     rating: number;
@@ -70,7 +82,10 @@ const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
         {isReviewsLoading ? (
           <p>Loading reviews...</p>
         ) : (
-          <ReviewsList reviews={reviews}></ReviewsList>
+          <ReviewsList
+            reviews={reviews}
+            handleDeleteReview={handleDeleteReview}
+          ></ReviewsList>
         )}
       </div>
 

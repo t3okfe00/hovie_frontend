@@ -246,6 +246,7 @@ export interface Review {
   rating: number;
   description: string;
   usersId: number;
+  createdAt: string;
 }
 
 export interface reviewData {

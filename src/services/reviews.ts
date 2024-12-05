@@ -20,3 +20,10 @@ export const submitReview = async (
     body: JSON.stringify({ comment, rating }),
   });
 };
+
+export const deleteReviews = async (reviewId: number) => {
+  const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+  const endpoint = `${BASE_URL}/reviews/${reviewId}`;
+  const method = "DELETE";
+  return apiClient(endpoint, { method });
+};
