@@ -34,7 +34,7 @@ export function GroupPage({ isOwner = true }: Readonly<GroupPageProps>) {
             if (!response.ok) throw new Error('Failed to fetch group data');
             return response.json();
         },
-        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: 1000 * 60 * 10,
     });
 
     if (isLoading) {

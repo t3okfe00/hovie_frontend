@@ -17,7 +17,7 @@ interface Group {
     category: string;
     members: number;
     role: string;
-    profileUrl: string; // New property for group image URL
+    profileUrl: string;
 }
 
 export function Groups() {
@@ -25,7 +25,6 @@ export function Groups() {
     const [query, setQuery] = useState("");
     const { user } = useAuth();
 
-    // Fetching Your Groups dynamically
     const {
         data: yourGroups,
         isLoading: isLoadingYourGroups,
@@ -43,10 +42,9 @@ export function Groups() {
             if (!response.ok) throw new Error("Failed to fetch your groups");
             return response.json();
         },
-        staleTime: 0, // Cache for 10 minutes
+        staleTime: 0,
     });
 
-    // Fetching Featured Groups dynamically
     const {
         data: featuredGroups,
         isLoading: isLoadingFeatured,
@@ -63,10 +61,9 @@ export function Groups() {
             if (!response.ok) throw new Error("Failed to fetch featured groups");
             return response.json();
         },
-        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: 1000 * 60 * 10,
     });
 
-    // Fetching Popular Groups dynamically
     const {
         data: popularGroups,
         isLoading: isLoadingPopular,
@@ -83,10 +80,9 @@ export function Groups() {
             if (!response.ok) throw new Error("Failed to fetch popular groups");
             return response.json();
         },
-        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: 1000 * 60 * 10,
     });
 
-    // Fetching Search Results dynamically
     const {
         data: searchResults,
         isLoading: isLoadingSearch,
@@ -103,7 +99,7 @@ export function Groups() {
             if (!response.ok) throw new Error("Failed to fetch search results");
             return response.json();
         },
-        enabled: !!query, // Only run query if there is a search query
+        enabled: !!query,
     });
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,7 +145,7 @@ export function Groups() {
                                         {...group}
                                         members={Number(group.members)}
                                         imageUrl={group.profileUrl}
-                                        userId={user?.id} // Pass the userId prop
+                                        userId={user?.id}
                                     />
                                 ))}
                             </div>
@@ -197,7 +193,7 @@ export function Groups() {
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
-                                            userId={user?.id} // Pass the userId prop
+                                            userId={user?.id}
                                         />
                                     ))}
                                 </div>
@@ -218,7 +214,7 @@ export function Groups() {
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
-                                            userId={user?.id} // Pass the userId prop
+                                            userId={user?.id}
                                         />
                                     ))}
                                 </div>

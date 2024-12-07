@@ -77,7 +77,7 @@ export function CreateGroupDialog() {
         const capitalizedCategory = category.charAt(0).toUpperCase() + category.slice(1);
         const formData = new FormData();
         formData.append('name', name);
-        formData.append('ownersId', user?.id.toString());
+        formData.append('ownersId', user?.id?.toString() || '');
         formData.append('category', capitalizedCategory);
         formData.append('description', description);
         if (image) {

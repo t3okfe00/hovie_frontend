@@ -54,7 +54,7 @@ interface Member {
     joinDate: string;
 }
 
-const BASE_URL = 'http://localhost:3000'; // Base URL
+const BASE_URL = 'http://localhost:3000';
 
 export function YourGroupCard({ id, name, members, description, category, pictureUrl, isOwner }: Readonly<YourGroupCardProps>) {
     const navigate = useNavigate();
@@ -134,11 +134,11 @@ export function YourGroupCard({ id, name, members, description, category, pictur
                 .map((member: { usersId: number; userName: string; role: string }) => ({
                     id: member.usersId.toString(),
                     name: member.userName,
-                    avatar: '', // Replace with actual avatar URL if available
+                    avatar: '',
                     role: member.role as 'moderator' | 'member'
                 }));
         },
-        staleTime: 0, // Disable caching
+        staleTime: 0,
     });
 
     return (

@@ -42,7 +42,7 @@ export function MovieSuggestionButton({ onMovieSelect }: Readonly<MovieSuggestio
             return data.results;
         },
         enabled: !!search,
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 5,
         retry: 3,
     });
 

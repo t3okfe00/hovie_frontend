@@ -41,7 +41,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
     const [newMessage, setNewMessage] = useState('');
     const [chatMessages, setChatMessages] = useState<Message[]>([]);
     const { user } = useAuth();
-    const userId = user?.id ?? 0; // Provide a default value for userId
+    const userId = user?.id ?? 0;
     const queryClient = useQueryClient();
 
     const { data: fetchedMessages, isLoading, isError, error } = useQuery<Message[]>({
@@ -68,7 +68,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
                         id: item.content.id.toString(),
                         user: {
                             name: item.userName,
-                            avatar: '', // Ensure avatar is empty to use AvatarFallback
+                            avatar: '',
                             role
                         },
                         content: item.content.message,
@@ -79,7 +79,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
                             imageUrl: item.content.message,
                             year: new Date(movieData.release_date).getFullYear().toString(),
                             genres: movieData.genres.map((genre: { name: string }) => genre.name),
-                            review: `${movieData.vote_average}/10` // Corrected review rating
+                            review: `${movieData.vote_average}/10`
                         }
                     };
                 } else {
@@ -87,7 +87,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
                         id: item.content.id.toString(),
                         user: {
                             name: item.userName,
-                            avatar: '', // Ensure avatar is empty to use AvatarFallback
+                            avatar: '',
                             role
                         },
                         content: item.content.message,
@@ -99,7 +99,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
 
             return Promise.all(movieDetailsPromises);
         },
-        staleTime: 0, // Disable caching
+        staleTime: 0,
     });
 
     useEffect(() => {
@@ -139,7 +139,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
         addContentMutation.mutate({
             userId,
             message: `https://image.tmdb.org/t/p/w200${movie.poster_path}`,
-            movieId: movie.id.toString() // Convert to string to match the expected type
+            movieId: movie.id.toString()
         });
     };
 
@@ -186,7 +186,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
                                             <img
                                                 src={message.movieData?.imageUrl}
                                                 alt={message.movieData?.title}
-                                                className="w-16 h-24 rounded object-cover" // Adjusted height
+                                                className="w-16 h-24 rounded object-cover"
                                             />
                                             <div>
                                                 <h4 className="font-medium">{message.movieData?.title}</h4>
