@@ -10,43 +10,19 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Film } from 'lucide-react';
+import { Film, Search } from 'lucide-react';
 import {
     Command,
     CommandGroup,
     CommandItem,
     CommandList,
+    CommandEmpty,
 } from '@/components/ui/command';
+import { useQuery } from '@tanstack/react-query';
+import { Movie } from '@/types';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
-// Mock movie data - in a real app, this would come from an API
-const mockMovies = [
-    {
-        id: '1',
-        title: 'The Godfather',
-        year: '1972',
-        poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200',
-    },
-    {
-        id: '2',
-        title: 'Pulp Fiction',
-        year: '1994',
-        poster: 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=200',
-    },
-    {
-        id: '3',
-        title: 'The Dark Knight',
-        year: '2008',
-        poster: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=200',
-    },
-];
-
-interface Movie {
-    id: string;
-    title: string;
-    year: string;
-    poster: string;
-}
+const BASE_URL = "http://localhost:3000/movie";
 
 interface MovieSuggestionButtonProps {
     onMovieSelect: (movie: Movie) => void;
@@ -54,7 +30,22 @@ interface MovieSuggestionButtonProps {
 
 export function MovieSuggestionButton({ onMovieSelect }: MovieSuggestionButtonProps) {
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState("");
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+
+    const { data: searchResults, isLoading, isError } = useQuery({
+        queryKey: ["searchMovies", search],
+        queryFn: async () => {
+            if (!search) return [];
+            const response = await fetch(`${BASE_URL}/search?query=${search}&language=en-US`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            return data.results;
+        },
+        enabled: !!search,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        retry: 3,
+    });
 
     const handleMovieSelect = (movie: Movie) => {
         setSelectedMovie(movie);
@@ -85,54 +76,59 @@ export function MovieSuggestionButton({ onMovieSelect }: MovieSuggestionButtonPr
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-                        <div className="grid gap-2">
-                            <Label>Search Movie</Label>
-                            <Command className="border rounded-md">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                            <Input
+                                placeholder="Search for a movie..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="pl-10"
+                            />
+                        </div>
+                        {selectedMovie && (
+                            <div className="flex items-center gap-2 p-2 border rounded-md">
+                                <img
+                                    src={`https://image.tmdb.org/t/p/w200${selectedMovie.poster_path}`}
+                                    alt={selectedMovie.title}
+                                    className="w-12 h-12 object-cover rounded"
+                                />
+                                <div>
+                                    <p className="font-medium">{selectedMovie.title}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {new Date(selectedMovie.release_date).getFullYear()}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                        {isLoading ? (
+                            <LoadingSpinner />
+                        ) : isError ? (
+                            <p>Error loading movies. Please try again later.</p>
+                        ) : (
+                            <Command className="border rounded-md max-h-60 overflow-y-auto">
                                 <CommandList>
+                                    <CommandEmpty>No movies found.</CommandEmpty>
                                     <CommandGroup>
-                                        <Input
-                                            placeholder="Search for a movie..."
-                                            className="border-0 focus-visible:ring-0"
-                                        />
-                                    </CommandGroup>
-                                    {selectedMovie ? (
-                                        <CommandGroup>
+                                        {searchResults?.map((movie: Movie) => (
                                             <CommandItem
+                                                key={movie.id}
+                                                onSelect={() => handleMovieSelect(movie)}
                                                 className="flex items-center gap-2 cursor-pointer"
                                             >
                                                 <img
-                                                    src={selectedMovie.poster}
-                                                    alt={selectedMovie.title}
+                                                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                                                    alt={movie.title}
                                                     className="w-8 h-8 object-cover rounded"
                                                 />
                                                 <span>
-                          {selectedMovie.title} ({selectedMovie.year})
-                        </span>
+                                                    {movie.title} ({new Date(movie.release_date).getFullYear()})
+                                                </span>
                                             </CommandItem>
-                                        </CommandGroup>
-                                    ) : (
-                                        <CommandGroup>
-                                            {mockMovies.map((movie) => (
-                                                <CommandItem
-                                                    key={movie.id}
-                                                    onSelect={() => handleMovieSelect(movie)}
-                                                    className="flex items-center gap-2 cursor-pointer"
-                                                >
-                                                    <img
-                                                        src={movie.poster}
-                                                        alt={movie.title}
-                                                        className="w-8 h-8 object-cover rounded"
-                                                    />
-                                                    <span>
-                            {movie.title} ({movie.year})
-                          </span>
-                                                </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                    )}
+                                        ))}
+                                    </CommandGroup>
                                 </CommandList>
                             </Command>
-                        </div>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button type="submit" disabled={!selectedMovie}>

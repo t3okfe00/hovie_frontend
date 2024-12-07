@@ -14,7 +14,7 @@ interface Member {
 }
 
 const roleColors = {
-    owner: 'bg-primary text-primary-foreground',
+    owner: 'bg-orange-500 text-primary-foreground',
     moderator: 'bg-blue-500 text-white',
     member: 'bg-secondary text-secondary-foreground'
 };
@@ -72,7 +72,6 @@ export function MembersList() {
                                         {capitalizeFirstLetter(member.role)}
                                     </Badge>
                                 </div>
-                                <p className="text-sm text-muted-foreground">Joined {member.joinDate}</p>
                             </div>
                         </div>
                     ) : null

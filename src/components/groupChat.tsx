@@ -5,7 +5,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Send } from 'lucide-react';
-import { format } from 'date-fns';
 import { MovieSuggestionButton } from './movieSuggestionButton';
 import { useAuth } from "@/hooks/useAuth";
 
@@ -14,6 +13,8 @@ interface Movie {
     title: string;
     year: string;
     poster: string;
+    genres: string[];
+    review: string;
 }
 
 interface Message {
@@ -29,6 +30,9 @@ interface Message {
     movieData?: {
         title: string;
         imageUrl: string;
+        year: string;
+        genres: string[];
+        review: string;
     };
 }
 
@@ -56,20 +60,48 @@ export function GroupChat({ groupId }: GroupChatProps) {
             if (!response.ok) throw new Error('Failed to fetch content');
             const data = await response.json();
             const messages = Array.isArray(data) ? data : [data];
-            return messages.map((item: { content: { id: number; timestamp: string; message: string; movieId: number }; userName: string }) => ({
-                id: item.content.id.toString(),
-                user: {
-                    name: item.userName, // Use userName from the response
-                    avatar: 'https://via.placeholder.com/150', // Mock user avatar
-                    role: 'member' // Mock user role
-                },
-                content: item.content.message,
-                timestamp: new Date(item.content.timestamp),
-                type: item.content.movieId === -1 ? 'text' : 'movie',
-                movieData: item.content.movieId !== -1 ? { title: 'Mock Movie Title', imageUrl: 'https://via.placeholder.com/150' } : undefined // Mock movie data
-            }));
+
+            const movieDetailsPromises = messages.map(async (item: { content: { id: number; timestamp: string; message: string; movieId: number }; userName: string }) => {
+                if (item.content.movieId !== -1) {
+                    const movieResponse = await fetch(`http://localhost:3000/movie/${item.content.movieId}`);
+                    if (!movieResponse.ok) throw new Error('Failed to fetch movie details');
+                    const movieData = await movieResponse.json();
+                    return {
+                        id: item.content.id.toString(),
+                        user: {
+                            name: item.userName,
+                            avatar: '', // Ensure avatar is empty to use AvatarFallback
+                            role: 'member'
+                        },
+                        content: item.content.message,
+                        timestamp: new Date(item.content.timestamp),
+                        type: 'movie',
+                        movieData: {
+                            title: movieData.title,
+                            imageUrl: item.content.message,
+                            year: new Date(movieData.release_date).getFullYear().toString(),
+                            genres: movieData.genres.map((genre: { name: string }) => genre.name),
+                            review: `${movieData.vote_average}/10` // Corrected review rating
+                        }
+                    };
+                } else {
+                    return {
+                        id: item.content.id.toString(),
+                        user: {
+                            name: item.userName,
+                            avatar: '', // Ensure avatar is empty to use AvatarFallback
+                            role: 'member'
+                        },
+                        content: item.content.message,
+                        timestamp: new Date(item.content.timestamp),
+                        type: 'text'
+                    };
+                }
+            });
+
+            return Promise.all(movieDetailsPromises);
         },
-        staleTime: 0, // Cache for 10 minutes
+        staleTime: 0, // Disable caching
     });
 
     useEffect(() => {
@@ -79,7 +111,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
     }, [fetchedMessages]);
 
     const addContentMutation = useMutation({
-        mutationFn: async (contentData: { userId: number; message: string }) => {
+        mutationFn: async (contentData: { userId: number; message: string; movieId: string }) => {
             const response = await fetch(`http://localhost:3000/groups/${groupId}/content`, {
                 method: 'POST',
                 headers: {
@@ -87,7 +119,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
                 },
                 body: JSON.stringify({
                     userId,
-                    content: -1,
+                    content: contentData.movieId,
                     message: contentData.message
                 })
             });
@@ -102,26 +134,15 @@ export function GroupChat({ groupId }: GroupChatProps) {
 
     const handleSendMessage = () => {
         if (newMessage.trim() === '') return;
-        addContentMutation.mutate({ userId, message: newMessage });
+        addContentMutation.mutate({ userId, message: newMessage, movieId: '-1' });
     };
 
     const handleMovieSelect = (movie: Movie) => {
-        const newMovieMessage: Message = {
-            id: Date.now().toString(),
-            user: {
-                name: 'You',
-                avatar: 'https://via.placeholder.com/150',
-                role: 'member'
-            },
-            content: "Check out this movie!",
-            timestamp: new Date(),
-            type: 'movie',
-            movieData: {
-                title: movie.title,
-                imageUrl: movie.poster
-            }
-        };
-        setChatMessages((prevMessages: Message[]) => [...prevMessages, newMovieMessage]);
+        addContentMutation.mutate({
+            userId,
+            message: `https://image.tmdb.org/t/p/w200${movie.poster_path}`, // Correct poster URL
+            movieId: movie.id
+        });
     };
 
     if (isLoading) {
@@ -147,7 +168,15 @@ export function GroupChat({ groupId }: GroupChatProps) {
                                 <div className="flex items-center gap-2">
                                     <span className="font-semibold">{message.user.name}</span>
                                     <span className="text-xs text-muted-foreground">
-                                        {format(message.timestamp, 'MMM d, h:mm a')}
+                                        {message.timestamp.toLocaleString(undefined, {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                            hour12: false,
+                                            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                                        })}
                                     </span>
                                 </div>
 
@@ -159,11 +188,13 @@ export function GroupChat({ groupId }: GroupChatProps) {
                                             <img
                                                 src={message.movieData?.imageUrl}
                                                 alt={message.movieData?.title}
-                                                className="w-16 h-16 rounded object-cover"
+                                                className="w-16 h-24 rounded object-cover" // Adjusted height
                                             />
                                             <div>
                                                 <h4 className="font-medium">{message.movieData?.title}</h4>
-                                                <p className="text-sm text-muted-foreground">{message.content}</p>
+                                                <p className="text-sm text-muted-foreground">Year: {message.movieData?.year}</p>
+                                                <p className="text-sm text-muted-foreground">Genres: {message.movieData?.genres.join(', ')}</p>
+                                                <p className="text-sm text-muted-foreground">Review: {message.movieData?.review}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -181,8 +212,8 @@ export function GroupChat({ groupId }: GroupChatProps) {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <Button onClick={handleSendMessage}>
-                    <Send className="h-4 w-4" />
+                <Button className="bg-orange-500" onClick={handleSendMessage}>
+                    <Send className="h-4 w-4 text-primary-foreground" />
                 </Button>
             </div>
         </div>
