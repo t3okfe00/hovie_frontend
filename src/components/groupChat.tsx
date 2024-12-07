@@ -9,12 +9,9 @@ import { MovieSuggestionButton } from './movieSuggestionButton';
 import { useAuth } from "@/hooks/useAuth";
 
 interface Movie {
-    id: string;
+    poster_path: string;
+    id: number;
     title: string;
-    year: string;
-    poster: string;
-    genres: string[];
-    review: string;
 }
 
 interface Message {
@@ -37,7 +34,7 @@ interface Message {
 }
 
 interface GroupChatProps {
-    groupId: number;
+    readonly groupId: number
 }
 
 export function GroupChat({ groupId }: GroupChatProps) {
@@ -61,7 +58,8 @@ export function GroupChat({ groupId }: GroupChatProps) {
             const data = await response.json();
             const messages = Array.isArray(data) ? data : [data];
 
-            const movieDetailsPromises = messages.map(async (item: { content: { id: number; timestamp: string; message: string; movieId: number }; userName: string }) => {
+            const movieDetailsPromises = messages.map(async (item) => {
+                const role = item.userRole as 'owner' | 'moderator' | 'member';
                 if (item.content.movieId !== -1) {
                     const movieResponse = await fetch(`http://localhost:3000/movie/${item.content.movieId}`);
                     if (!movieResponse.ok) throw new Error('Failed to fetch movie details');
@@ -71,11 +69,11 @@ export function GroupChat({ groupId }: GroupChatProps) {
                         user: {
                             name: item.userName,
                             avatar: '', // Ensure avatar is empty to use AvatarFallback
-                            role: 'member'
+                            role
                         },
                         content: item.content.message,
                         timestamp: new Date(item.content.timestamp),
-                        type: 'movie',
+                        type: 'movie' as const,
                         movieData: {
                             title: movieData.title,
                             imageUrl: item.content.message,
@@ -90,11 +88,11 @@ export function GroupChat({ groupId }: GroupChatProps) {
                         user: {
                             name: item.userName,
                             avatar: '', // Ensure avatar is empty to use AvatarFallback
-                            role: 'member'
+                            role
                         },
                         content: item.content.message,
                         timestamp: new Date(item.content.timestamp),
-                        type: 'text'
+                        type: 'text' as const
                     };
                 }
             });
@@ -127,7 +125,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
             return response.json();
         },
         onSettled: () => {
-            queryClient.invalidateQueries(['groupContent', groupId, userId]);
+            queryClient.invalidateQueries({ queryKey: ['groupContent', groupId, userId] });
             setNewMessage('');
         },
     });
@@ -140,8 +138,8 @@ export function GroupChat({ groupId }: GroupChatProps) {
     const handleMovieSelect = (movie: Movie) => {
         addContentMutation.mutate({
             userId,
-            message: `https://image.tmdb.org/t/p/w200${movie.poster_path}`, // Correct poster URL
-            movieId: movie.id
+            message: `https://image.tmdb.org/t/p/w200${movie.poster_path}`,
+            movieId: movie.id.toString() // Convert to string to match the expected type
         });
     };
 

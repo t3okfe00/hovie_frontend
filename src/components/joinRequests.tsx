@@ -42,22 +42,22 @@ export function JoinRequestsDialog() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId }), // Corrected to send userId
+                body: JSON.stringify({ userId }),
             });
             if (!response.ok) throw new Error('Failed to fetch join requests');
-            const data = await response.json();
+            const data: JoinRequest[] = await response.json();
 
             const detailedRequests = data
-                .filter((request: any) => request.status === 'pending')
-                .map((request: any) => ({
+                .filter((request: JoinRequest) => request.status === 'pending')
+                .map((request: JoinRequest) => ({
                     id: request.id,
                     user: {
-                        id: request.usersId,
-                        name: request.userName,
-                        avatar: 'https://via.placeholder.com/100', // Random profile picture URL
+                        id: request.user.id,
+                        name: request.user.name,
+                        avatar: 'https://via.placeholder.com/100',
                     },
                     status: request.status,
-                    timestamp: new Date().toLocaleTimeString(), // Example timestamp
+                    timestamp: new Date().toLocaleTimeString(),
                 }));
 
             setRequests(detailedRequests);
@@ -67,7 +67,7 @@ export function JoinRequestsDialog() {
     };
 
     const handleAccept = async (requestId: string, userId: string) => {
-        const requestBody = { userId, ownerId: user?.id }; // Replace with actual ownerId
+        const requestBody = { userId, ownerId: user?.id };
         try {
             const response = await fetch(`${BASE_URL}/groups/${id}/addmembers`, {
                 method: 'POST',
@@ -84,7 +84,7 @@ export function JoinRequestsDialog() {
     };
 
     const handleDecline = async (requestId: string, userId: string) => {
-        const requestBody = { userId, ownerId: user?.id }; // Replace with actual ownerId
+        const requestBody = { userId, ownerId: user?.id };
         try {
             const response = await fetch(`${BASE_URL}/groups/${id}/declineJoinRequest`, {
                 method: 'POST',

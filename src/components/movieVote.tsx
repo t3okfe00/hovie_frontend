@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ThumbsUp } from 'lucide-react';
-import { SuggestMovieDialog } from './SuggestMovieDialog';
+import { SuggestMovieDialog } from './suggestMovieDialog';
 
 interface MovieVoteItem {
     id: string;

@@ -41,6 +41,8 @@ interface YourGroupCardProps {
     description: string;
     category: string;
     pictureUrl: string;
+    ownersId: number;
+    imageUrl: string;
     isOwner: boolean;
 }
 
@@ -54,7 +56,7 @@ interface Member {
 
 const BASE_URL = 'http://localhost:3000'; // Base URL
 
-export function YourGroupCard({ id, name, members, description, category, pictureUrl, isOwner }: YourGroupCardProps) {
+export function YourGroupCard({ id, name, members, description, category, pictureUrl, isOwner }: Readonly<YourGroupCardProps>) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { user } = useAuth();

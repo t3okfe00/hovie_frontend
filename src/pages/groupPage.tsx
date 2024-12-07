@@ -23,7 +23,7 @@ interface Group {
     pictureUrl: string;
 }
 
-export function GroupPage({ isOwner = true }: GroupPageProps) {
+export function GroupPage({ isOwner = true }: Readonly<GroupPageProps>) {
     const { id } = useParams<{ id: string }>();
     const groupId = Number(id);
 

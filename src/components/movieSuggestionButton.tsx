@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/command';
 import { useQuery } from '@tanstack/react-query';
 import { Movie } from '@/types';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 const BASE_URL = "http://localhost:3000/movie";
 
@@ -28,12 +27,12 @@ interface MovieSuggestionButtonProps {
     onMovieSelect: (movie: Movie) => void;
 }
 
-export function MovieSuggestionButton({ onMovieSelect }: MovieSuggestionButtonProps) {
+export function MovieSuggestionButton({ onMovieSelect }: Readonly<MovieSuggestionButtonProps>) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-    const { data: searchResults, isLoading, isError } = useQuery({
+    const { data: searchResults, isError } = useQuery({
         queryKey: ["searchMovies", search],
         queryFn: async () => {
             if (!search) return [];
@@ -100,9 +99,7 @@ export function MovieSuggestionButton({ onMovieSelect }: MovieSuggestionButtonPr
                                 </div>
                             </div>
                         )}
-                        {isLoading ? (
-                            <LoadingSpinner />
-                        ) : isError ? (
+                        {isError ? (
                             <p>Error loading movies. Please try again later.</p>
                         ) : (
                             <Command className="border rounded-md max-h-60 overflow-y-auto">

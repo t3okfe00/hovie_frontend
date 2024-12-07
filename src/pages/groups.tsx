@@ -145,7 +145,7 @@ export function Groups() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                 {searchResults?.map((group) => (
                                     <GroupCard
-                                        key={group.id}
+                                        pictureUrl={""} key={group.id}
                                         {...group}
                                         members={Number(group.members)}
                                         imageUrl={group.profileUrl}
@@ -170,12 +170,11 @@ export function Groups() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                         {yourGroups?.map((group) => (
                                             <YourGroupCard
-                                                key={group.id}
+                                                pictureUrl={""} key={group.id}
                                                 {...group}
                                                 members={Number(group.members)}
                                                 imageUrl={group.profileUrl}
-                                                isOwner={group.ownersId === user?.id}
-                                            />
+                                                isOwner={group.ownersId === user?.id}                                            />
                                         ))}
                                     </div>
                                 )}
@@ -194,7 +193,7 @@ export function Groups() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                     {featuredGroups?.map((group) => (
                                         <GroupCard
-                                            key={group.id}
+                                            pictureUrl={""} key={group.id}
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
@@ -215,7 +214,7 @@ export function Groups() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                     {popularGroups?.map((group) => (
                                         <GroupCard
-                                            key={group.id}
+                                            pictureUrl={""} key={group.id}
                                             {...group}
                                             members={Number(group.members)}
                                             imageUrl={group.profileUrl}
