@@ -21,7 +21,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Movie } from '@/types';
 
-const BASE_URL = "http://localhost:3000/movie";
+const BASE_URL = `${import.meta.env.VITE_BACKEND_BASE_URL}/movie`;
 
 interface MovieSuggestionButtonProps {
     onMovieSelect: (movie: Movie) => void;

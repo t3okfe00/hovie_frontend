@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from "@/hooks/useAuth";
 
+const BASE_URL = `${import.meta.env.VITE_BACKEND_BASE_URL}/groups`;
+
 interface Member {
     id: string;
     name: string;
@@ -31,7 +33,7 @@ export function MembersList() {
     const { data: members, isLoading, isError } = useQuery<Member[]>({
         queryKey: ['members', id],
         queryFn: async () => {
-            const response = await fetch(`http://localhost:3000/groups/${id}/members`, {
+            const response = await fetch(`${BASE_URL}/${id}/members`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

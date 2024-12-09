@@ -8,7 +8,7 @@ import { MembersList } from '@/components/membersList';
 import { JoinRequestsDialog } from '@/components/joinRequests';
 import { MovieVote } from '@/components/movieVote';
 
-const BASE_URL = 'http://localhost:3000/groups';
+const BASE_URL = `${import.meta.env.VITE_BACKEND_BASE_URL}/groups`;
 
 interface GroupPageProps {
     isOwner?: boolean;

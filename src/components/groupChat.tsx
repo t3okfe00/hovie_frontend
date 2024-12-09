@@ -8,6 +8,8 @@ import { Send } from 'lucide-react';
 import { MovieSuggestionButton } from './movieSuggestionButton';
 import { useAuth } from "@/hooks/useAuth";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+
 interface Movie {
     poster_path: string;
     id: number;
@@ -47,7 +49,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
     const { data: fetchedMessages, isLoading, isError, error } = useQuery<Message[]>({
         queryKey: ['groupContent', groupId, userId],
         queryFn: async () => {
-            const response = await fetch(`http://localhost:3000/groups/${groupId}/contents`, {
+            const response = await fetch(`${BASE_URL}/groups/${groupId}/contents`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -61,7 +63,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
             const movieDetailsPromises = messages.map(async (item) => {
                 const role = item.userRole as 'owner' | 'moderator' | 'member';
                 if (item.content.movieId !== -1) {
-                    const movieResponse = await fetch(`http://localhost:3000/movie/${item.content.movieId}`);
+                    const movieResponse = await fetch(`${BASE_URL}/movie/${item.content.movieId}`);
                     if (!movieResponse.ok) throw new Error('Failed to fetch movie details');
                     const movieData = await movieResponse.json();
                     return {
@@ -110,7 +112,7 @@ export function GroupChat({ groupId }: GroupChatProps) {
 
     const addContentMutation = useMutation({
         mutationFn: async (contentData: { userId: number; message: string; movieId: string }) => {
-            const response = await fetch(`http://localhost:3000/groups/${groupId}/content`, {
+            const response = await fetch(`${BASE_URL}/groups/${groupId}/content`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

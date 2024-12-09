@@ -17,7 +17,7 @@ import { ImagePlus, X } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from "@/hooks/useAuth";
 
-const BASE_URL = "http://localhost:3000/groups";
+const BASE_URL = `${import.meta.env.VITE_BACKEND_BASE_URL}/groups`;
 
 export function CreateGroupDialog() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);

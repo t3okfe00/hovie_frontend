@@ -27,7 +27,7 @@ interface GroupCardProps {
     userId: number | undefined;
 }
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 export function GroupCard({ id, name, members = 0, description, category, pictureUrl, ownersId }: Readonly<GroupCardProps>) {
     const { user } = useAuth();
