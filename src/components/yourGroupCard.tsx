@@ -90,6 +90,7 @@ export function YourGroupCard({ id, name, members, description, category, pictur
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['members', id] });
+            queryClient.invalidateQueries({ queryKey: ['yourGroups', user?.id] });
             setIsDialogOpen(false);
         },
     });

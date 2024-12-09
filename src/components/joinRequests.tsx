@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useParams } from 'react-router-dom';
+import {useQueryClient} from "@tanstack/react-query";
 
 interface JoinRequest {
     id: string;
@@ -33,6 +34,7 @@ export function JoinRequestsDialog() {
     const [requests, setRequests] = useState<JoinRequest[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { user } = useAuth();
+    const queryClient = useQueryClient();
 
     const fetchJoinRequests = async () => {
         try {
@@ -80,6 +82,8 @@ export function JoinRequestsDialog() {
             setRequests((prevRequests) => prevRequests.filter((request) => request.id !== requestId));
         } catch (error) {
             console.error('Error accepting join request:', error);
+        } finally {
+            queryClient.invalidateQueries({ queryKey: ['members', id] });
         }
     };
 
