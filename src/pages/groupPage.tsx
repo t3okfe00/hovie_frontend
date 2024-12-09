@@ -23,7 +23,7 @@ interface Group {
     pictureUrl: string;
 }
 
-export function GroupPage({ isOwner = true }: GroupPageProps) {
+export function GroupPage({ isOwner = true }: Readonly<GroupPageProps>) {
     const { id } = useParams<{ id: string }>();
     const groupId = Number(id);
 
@@ -34,7 +34,7 @@ export function GroupPage({ isOwner = true }: GroupPageProps) {
             if (!response.ok) throw new Error('Failed to fetch group data');
             return response.json();
         },
-        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: 1000 * 60 * 10,
     });
 
     if (isLoading) {

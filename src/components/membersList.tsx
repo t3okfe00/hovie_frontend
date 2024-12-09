@@ -14,7 +14,7 @@ interface Member {
 }
 
 const roleColors = {
-    owner: 'bg-primary text-primary-foreground',
+    owner: 'bg-orange-500 text-primary-foreground',
     moderator: 'bg-blue-500 text-white',
     member: 'bg-secondary text-secondary-foreground'
 };
@@ -40,16 +40,15 @@ export function MembersList() {
             });
             if (!response.ok) throw new Error('Failed to fetch members');
             const data = await response.json();
-            // Transform the data to match the expected structure
             return data.map((member: { usersId: number; userName: string; role: string }) => ({
                 id: member.usersId.toString(),
-                name: member.userName, // Use the actual user name
-                avatar: '', // Replace with actual avatar URL if available
+                name: member.userName,
+                avatar: '',
                 role: member.role as 'owner' | 'moderator' | 'member',
-                joinDate: 'Jan 2024' // Replace with actual join date if available
+                joinDate: 'Jan 2024'
             }));
         },
-        staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+        staleTime: 1000 * 60 * 10,
     });
 
     if (isLoading) return <p>Loading members...</p>;
@@ -72,7 +71,6 @@ export function MembersList() {
                                         {capitalizeFirstLetter(member.role)}
                                     </Badge>
                                 </div>
-                                <p className="text-sm text-muted-foreground">Joined {member.joinDate}</p>
                             </div>
                         </div>
                     ) : null

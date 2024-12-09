@@ -18,16 +18,18 @@ import {
 interface GroupCardProps {
     id: number;
     name: string;
-    members?: number;
+    members: number;
     description: string;
     category: string;
     pictureUrl: string;
     ownersId: number;
+    imageUrl: string;
+    userId: number | undefined;
 }
 
 const BASE_URL = 'http://localhost:3000';
 
-export function GroupCard({ id, name, members = 0, description, category, pictureUrl, ownersId }: GroupCardProps) {
+export function GroupCard({ id, name, members = 0, description, category, pictureUrl, ownersId }: Readonly<GroupCardProps>) {
     const { user } = useAuth();
     const isOwner = ownersId === user?.id;
     useToast();
@@ -48,9 +50,14 @@ export function GroupCard({ id, name, members = 0, description, category, pictur
             if (!response.ok) throw new Error('You have already requested to join this group');
             setModalTitle('Request Sent');
             setModalMessage(`Your request to join ${name} has been sent.`);
-        } catch (error: any) {
-            setModalTitle('Error');
-            setModalMessage(error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setModalTitle('Error');
+                setModalMessage(error.message);
+            } else {
+                setModalTitle('Error');
+                setModalMessage('An unknown error occurred.');
+            }
         } finally {
             setIsModalOpen(true);
         }

@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/command';
 import { Card } from '@/components/ui/card';
 
-// Mock movie data - in a real app, this would come from an API
 const mockMovies = [
   {
     id: '1',
@@ -61,7 +60,6 @@ export function SuggestMovieDialog() {
     e.preventDefault();
     if (!selectedMovie) return;
 
-    // Handle movie suggestion submission
     console.log({
       movie: selectedMovie,
       description,
