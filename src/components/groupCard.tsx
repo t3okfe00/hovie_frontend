@@ -89,14 +89,16 @@ export function GroupCard({ id, name, members = 0, description, category, pictur
                 </CardHeader>
                 <CardContent className="flex flex-col justify-between flex-1">
                     <CardDescription className="line-clamp-2 mb-4">{description}</CardDescription>
-                    {isOwner ? (
-                        <Button className="w-full mt-auto" variant="secondary">
-                            View Group
-                        </Button>
-                    ) : (
-                        <Button className="w-full mt-auto" variant="secondary" onClick={handleJoinGroup}>
-                            Request to Join
-                        </Button>
+                    {user && (
+                        isOwner ? (
+                            <Button className="w-full mt-auto" variant="secondary">
+                                View Group
+                            </Button>
+                        ) : (
+                            <Button className="w-full mt-auto" variant="secondary" onClick={handleJoinGroup}>
+                                Request to Join
+                            </Button>
+                        )
                     )}
                 </CardContent>
             </Card>

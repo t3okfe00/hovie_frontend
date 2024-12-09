@@ -45,16 +45,16 @@ export function JoinRequestsDialog() {
                 body: JSON.stringify({ userId }),
             });
             if (!response.ok) throw new Error('Failed to fetch join requests');
-            const data: JoinRequest[] = await response.json();
+            const data = await response.json();
 
             const detailedRequests = data
-                .filter((request: JoinRequest) => request.status === 'pending')
-                .map((request: JoinRequest) => ({
+                .filter((request: any) => request.status === 'pending')
+                .map((request: any) => ({
                     id: request.id,
                     user: {
-                        id: request.user.id,
-                        name: request.user.name,
-                        avatar: 'https://via.placeholder.com/100',
+                        id: request.usersId,
+                        name: request.userName,
+                        avatar: request.userAvatar || '', // Use actual avatar URL if available
                     },
                     status: request.status,
                     timestamp: new Date().toLocaleTimeString(),
@@ -134,8 +134,11 @@ export function JoinRequestsDialog() {
                                     {request.user && (
                                         <>
                                             <Avatar>
-                                                <AvatarImage src={request.user.avatar} />
-                                                <AvatarFallback>{request.user.name[0]}</AvatarFallback>
+                                                {request.user.avatar ? (
+                                                    <AvatarImage src={request.user.avatar} />
+                                                ) : (
+                                                    <AvatarFallback>{request.user.name[0]}</AvatarFallback>
+                                                )}
                                             </Avatar>
                                             <div className="flex-1">
                                                 <div className="flex items-center justify-between">
