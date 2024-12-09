@@ -68,17 +68,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (response.success) {
         console.log("Logout successful");
-        setUser(null);
-        setToken(null);
-        queryClient.clear(); // This clears the React Query cache
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        navigate("/login");
       } else {
         console.error("Logout failed:", response.message); // Handle logout failure
       }
     } catch (error) {
       console.error("Error logging out", error);
+    } finally {
+      setUser(null);
+      setToken(null);
+      queryClient.clear(); // This clears the React Query cache
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      navigate("/login");
     }
   };
 

@@ -73,12 +73,16 @@ export default function Navbar() {
               >
                 Showtimes
               </Link>
-              <Link
-                to={`/profiles${userendpoint}`}
-                className="hover:text-orange-500 transition-colors"
-              >
-                Profile
-              </Link>
+
+              {user && (
+                <Link
+                  to={`/profiles${userendpoint}`}
+                  className="hover:text-orange-500 transition-colors"
+                >
+                  Profile
+                </Link>
+              )}
+
               <Link
                 to="/groups"
                 className="hover:text-orange-500 transition-colors"
