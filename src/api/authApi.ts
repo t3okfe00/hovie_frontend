@@ -57,13 +57,14 @@ export const logout = async () => {
 
       return { success: true, message: "Logout successful" };
       // Redirect to login or homepage
-      // window.location.href = "/login"; // Or use react-router to navigate
     } else {
       console.error("Failed to logout");
       return { success: false, message: "Failed to logout" };
     }
   } catch (error) {
     console.error("Error logging out", error);
+    window.location.href = "/login"; // Or use react-router to navigate
+
     return { success: false, message: "Error logging out" };
   }
 };
