@@ -9,8 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 const AddToFavorites = ({ movie }: { movie: Movie }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { user } = useAuth(); // Assuming your Auth context provides `user`
-  console.log("User", user);
+  const { user } = useAuth();
 
   useEffect(() => {
     const checkIfFavorite = async () => {

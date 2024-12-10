@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/sheet";
 import { Filters } from "@/components/common/Filters";
 import { useAuth } from "@/hooks/useAuth";
-const BASE_URL = "http://localhost:3000/movie";
+const URL = import.meta.env.VITE_BACKEND_BASE_URL;
+const BASE_URL = `${URL}/movie`;
 
 export function MoviesPage() {
   const [page, setPage] = useState<number>(1); // New state for pagination

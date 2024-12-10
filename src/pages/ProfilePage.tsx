@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ProfileHeader } from "../components/ProfileHeader";
 import { FavoritesList } from "../components/FavoritesList";
-import Footer from "@/components/Footer";
 import ReactPaginate from "react-paginate";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchFavorites, deleteFavorite } from "@/services/favorites";
@@ -21,7 +20,6 @@ export function ProfilePage() {
 
   const isOwner = !userId; // If no userId in URL, we're viewing our own profile
   const { user, isLoading } = useAuth();
-  console.log("User at PROFILE PAGE:", user);
 
   useEffect(() => {
     const getFavorites = async () => {
@@ -64,7 +62,6 @@ export function ProfilePage() {
       setFavorites((prev) =>
         prev.filter((fav: Favorite) => fav.moviesId !== id)
       );
-      console.log("Favorite removed successfully!");
     } catch (error) {
       console.error("Failed to remove favorite:", error);
     }

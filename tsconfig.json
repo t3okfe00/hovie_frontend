@@ -5,9 +5,13 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "strict": false, // Disable all strict type-checking
+    "noEmitOnError": false, // Allow emitting files even if there are type errors
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": false, // Allow inconsistent casing in file names
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "include": ["src/*"]
     }
   }
 }

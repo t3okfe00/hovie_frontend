@@ -20,7 +20,6 @@ const apiClient = async (url: string, options: RequestInit) => {
     const error = new Error(
       responseBody.error || "Network response was not ok"
     );
-    console.log("**** RES BODY ****", responseBody);
     if (responseBody.error == "Unauthorized") {
       toast.error("You need to be signed in to leave a review!");
     }

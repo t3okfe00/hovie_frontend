@@ -5,7 +5,6 @@ import AuthInput from "@/components/common/auth/AuthInput";
 import AuthButton from "@/components/common/auth/AuthButton";
 import { UserPlus } from "lucide-react";
 import { User } from "@/types";
-import { toast } from "react-toastify";
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState("");

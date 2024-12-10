@@ -1,6 +1,6 @@
 // src/components/Profile.js
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Profile = () => {
   const [favorites, setFavorites] = useState([]);
@@ -8,9 +8,9 @@ const Profile = () => {
   useEffect(() => {
     // Fetch user's favorite movies/TV shows
     const fetchFavorites = async () => {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('/api/favorites', {
-        headers: { Authorization: `Bearer ${token}` }
+      const token = localStorage.getItem("token");
+      const response = await axios.get("/api/favorites", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setFavorites(response.data);
     };
@@ -24,7 +24,10 @@ const Profile = () => {
       <div>
         {favorites.map((item) => (
           <div key={item.id}>
-            <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title || item.name} />
+            <img
+              src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+              alt={item.title || item.name}
+            />
             <h3>{item.title || item.name}</h3>
           </div>
         ))}
