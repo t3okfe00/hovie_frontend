@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Chatbot from "./components/Chatbot";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProtectedRoute } from "./pages/ProtectedRoute"; // Assuming ProtectedRoute is a guard for auth
+import ShowtimeCard from "./components/ShowtimeCard";
 
 function App() {
   return (
@@ -67,8 +68,9 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
-      <Footer />
       <Chatbot />
+      <ShowtimeCard></ShowtimeCard>
+      <Footer />
     </>
   );
 }

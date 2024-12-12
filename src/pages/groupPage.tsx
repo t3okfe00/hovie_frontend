@@ -9,6 +9,7 @@ import { JoinRequestsDialog } from "@/components/joinRequests";
 import { MovieVote } from "@/components/movieVote";
 
 const BASE_URL = `${import.meta.env.VITE_BACKEND_BASE_URL}/groups`;
+const baseurl = import.meta.env.VITE_BACKEND_BASE_URL;
 
 interface GroupPageProps {
   isOwner?: boolean;
@@ -55,7 +56,7 @@ export function GroupPage({ isOwner = true }: Readonly<GroupPageProps>) {
         <div className="mb-8">
           <div className="relative h-64 rounded-lg overflow-hidden">
             <img
-              src={`http://localhost:3000${group?.pictureUrl}`}
+              src={`${baseurl}${group?.pictureUrl}`}
               alt="Group cover"
               className="w-full h-full object-cover"
             />
@@ -79,13 +80,6 @@ export function GroupPage({ isOwner = true }: Readonly<GroupPageProps>) {
                   <TabsTrigger value="chat" className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4" />
                     Group Chat
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="votes"
-                    className="flex items-center gap-2"
-                  >
-                    <ThumbsUp className="w-4 h-4" />
-                    Movie Votes
                   </TabsTrigger>
                 </TabsList>
                 {isOwner && <JoinRequestsDialog />}

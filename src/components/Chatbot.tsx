@@ -1,92 +1,84 @@
-// // src/components/Chatbot.js
-// import React, { useState } from "react";
-
-// const Chatbot = () => {
-//     const [messages, setMessages] = useState([]);
-//     const [input, setInput] = useState("");
-
-//     const handleSend = async () => {
-//         if (!input.trim()) return;
-
-//         // Add user message
-//         const newMessages = [...messages, { sender: "user", text: input }];
-//         setMessages(newMessages);
-
-//         // Send message to the backend
-//         const response = await fetch("http://localhost:3000/chat", {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify({ message: input }),
-//         });
-
-//         const data = await response.json();
-
-//         // Add bot response
-//         setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
-//         setInput("");
-//     };
-
-//     return (
-//         <div style={{ maxWidth: "400px", margin: "0 auto", border: "1px solid #ccc", borderRadius: "10px", padding: "10px" }}>
-//             <div style={{ height: "300px", overflowY: "auto", border: "1px solid #eee", marginBottom: "10px", padding: "5px" }}>
-//                 {messages.map((msg, idx) => (
-//                     <div key={idx} style={{ textAlign: msg.sender === "user" ? "right" : "left", margin: "5px 0" }}>
-//                         <span style={{ background: msg.sender === "user" ? "#daf1da" : "#f1f1f1", padding: "5px 10px", borderRadius: "10px" }}>
-//                             {msg.text}
-//                         </span>
-//                     </div>
-//                 ))}
-//             </div>
-//             <div>
-//                 <input
-//                     style={{ width: "calc(100% - 60px)", padding: "5px" }}
-//                     value={input}
-//                     onChange={(e) => setInput(e.target.value)}
-//                     placeholder="Type a message"
-//                 />
-//                 <button style={{ width: "50px", padding: "5px" }} onClick={handleSend}>
-//                     Send
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Chatbot;
-
-
-
-// src/components/Chatbot.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // To toggle the chatbot popup
+  const [menu, setMenu] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [conversationState, setConversationState] = useState("");
+  const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchMenuOptions();
+    }
+  }, [isOpen]);
+
+  const fetchMenuOptions = async () => {
+    const response = await fetch(`${BASE_URL}/chat`, {
+      // Changed to use BASE_URL
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: null,
+        userChoice: null,
+        conversationState: "mainMenu",
+      }),
+    });
+    const data = await response.json();
+    setMessages([{ sender: "bot", text: data.reply }]);
+    setMenu(data.menu || []);
+    setConversationState(data.conversationState);
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // Add user message
     const newMessages = [...messages, { sender: "user", text: input }];
     setMessages(newMessages);
 
-    // Send message to the backend
-    const response = await fetch("http://localhost:3000/chat", {
+    const response = await fetch(`${BASE_URL}/chat`, {
+      // Changed to use BASE_URL
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: input }),
+      body: JSON.stringify({
+        query: input,
+        userChoice: null,
+        conversationState,
+      }),
     });
 
     const data = await response.json();
 
-    // Add bot response
     setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
+    setMenu(data.menu || []);
+    setConversationState(data.conversationState);
     setInput("");
   };
 
+  const handleOptionClick = async (optionId) => {
+    const response = await fetch(`${BASE_URL}/chat`, {
+      // Changed to use BASE_URL
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userChoice: optionId,
+        query: null,
+        conversationState,
+      }),
+    });
+
+    const data = await response.json();
+
+    setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
+    setMenu(data.menu || []);
+    setConversationState(data.conversationState);
+  };
+
   return (
-    <div style={{ position: "fixed", bottom: "20px", right: "20px", zIndex: 1000 }}>
+    <div
+      style={{ position: "fixed", bottom: "20px", right: "20px", zIndex: 1000 }}
+    >
       {isOpen ? (
         <div
           style={{
@@ -101,16 +93,8 @@ const Chatbot = () => {
           }}
         >
           <div
-            style={{
-              background: "orange",
-              color: "black",
-              padding: "10px",
-              borderTopLeftRadius: "10px",
-              borderTopRightRadius: "10px",
-              cursor: "pointer",
-              textAlign: "center",
-            }}
-            onClick={() => setIsOpen(false)} // Close the chatbot
+            className="bg-orange-500 text-white px-4 py-2 rounded-t-md cursor-pointer text-center hover:bg-orange-400"
+            onClick={() => setIsOpen(false)}
           >
             Close Chatbot
           </div>
@@ -124,44 +108,41 @@ const Chatbot = () => {
                 }}
               >
                 <span
-                  style={{
-                    background: msg.sender === "user" ? "#FFA500" : "#FFA500",
-                    color: msg.sender === "user" ? "#000" : "#333",
-                    padding: "5px 10px",
-                    borderRadius: "10px",
-                    display: "inline-block",
-                    maxWidth: "80%",
-                  }}
+                  className={`px-3 py-2 rounded-lg inline-block max-w-[80%] ${
+                    msg.sender === "user"
+                      ? "bg-orange-500 text-black"
+                      : "bg-orange-500 text-gray-800"
+                  }`}
                 >
                   {msg.text}
                 </span>
               </div>
             ))}
           </div>
-          <div style={{ display: "flex", padding: "10px", borderTop: "1px solid #eee" }}>
+
+          {menu.length > 0 && (
+            <div className="p-2 border-t border-gray-200 flex flex-wrap gap-2">
+              {menu.map((option) => (
+                <button
+                  key={option.id}
+                  className="p-5 py-1 bg-orange-500 text-sm text-black rounded-md cursor-pointer"
+                  onClick={() => handleOptionClick(option.id)}
+                >
+                  {option.title}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="flex p-2 border-t border-gray-300 hover:bg-orange-400">
             <input
-              style={{
-                color:"black",
-                flex: 1,
-                padding: "10px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                marginRight: "10px",
-                outline: "none",
-              }}
+              className="text-black flex-1 p-2 border border-gray-300 rounded-md mr-2 outline-none"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type a message..."
             />
             <button
-              style={{
-                padding: "10px",
-                background: "#FFA500",
-                color: "black",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
+              className="p-2 bg-orange-400 text-black border-none rounded-md cursor-pointer"
               onClick={handleSend}
             >
               Send
@@ -170,21 +151,8 @@ const Chatbot = () => {
         </div>
       ) : (
         <button
-          style={{
-            padding: "10px",
-            background: "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "50%",
-            cursor: "pointer",
-            width: "50px",
-            height: "50px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-          }}
-          onClick={() => setIsOpen(true)} // Open the chatbot
+          className="p-2 bg-orange-600 text-white rounded-full cursor-pointer w-12 h-12 flex items-center justify-center shadow-md"
+          onClick={() => setIsOpen(true)}
         >
           💬
         </button>
