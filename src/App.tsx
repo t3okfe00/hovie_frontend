@@ -5,7 +5,7 @@ import { GroupPage } from "@/pages/groupPage"; // Import the GroupPage component
 import HomePage from "./pages/HomePage"; // Import HomePage to use in the Router
 import Navbar from "./components/Navbar";
 import { MovieDetails } from "./pages/moviedetails";
-import Showtimes from "./pages/showtimes";
+import Showtimes from "./pages/showtimes"; // No need to import ShowtimeCard here anymore
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import { ToastContainer } from "react-toastify";
@@ -15,7 +15,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Chatbot from "./components/Chatbot";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProtectedRoute } from "./pages/ProtectedRoute"; // Assuming ProtectedRoute is a guard for auth
-import ShowtimeCard from "./components/ShowtimeCard";
 
 function App() {
   return (
@@ -50,7 +49,6 @@ function App() {
           <Route path="/group/:id" element={<GroupPage />} />
 
           {/* Profile Routes */}
-          {/* For logged-in users, the ProtectedRoute ensures authentication is checked */}
           <Route
             path="/profiles/users/:userId"
             element={
@@ -59,8 +57,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Profile Route (non-protected for sharing links) */}
           <Route path="/lists/:userId" element={<ProfilePage />} />
 
           {/* Authentication Routes */}
@@ -69,7 +65,6 @@ function App() {
         </Routes>
       </div>
       <Chatbot />
-      <ShowtimeCard></ShowtimeCard>
       <Footer />
     </>
   );

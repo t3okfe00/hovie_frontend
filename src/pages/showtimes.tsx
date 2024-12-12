@@ -384,6 +384,7 @@ export default function Showtimes() {
             </motion.div>
           )}
         </AnimatePresence>
+        <ShowtimeCard></ShowtimeCard>
       </div>
     </div>
   );
