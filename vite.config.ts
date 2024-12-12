@@ -18,4 +18,10 @@ export default defineConfig({
   preview: {
     port: 5173, // Port for preview server
   },
+  build: {
+    rollupOptions: {
+      input: "index.html",
+    },
+  },
+  base: "/", // Ensure correct base URL for deployment
 });

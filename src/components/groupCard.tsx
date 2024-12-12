@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users } from 'lucide-react';
@@ -32,10 +32,34 @@ const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 export function GroupCard({ id, name, members = 0, description, category, pictureUrl, ownersId }: Readonly<GroupCardProps>) {
     const { user } = useAuth();
     const isOwner = ownersId === user?.id;
+    const [isMember, setIsMember] = useState(false);
     useToast();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
     const [modalMessage, setModalMessage] = useState('');
+
+    useEffect(() => {
+        const checkMembership = async () => {
+            try {
+                const userId = user?.id;
+                const response = await fetch(`${BASE_URL}/groups/${id}/isMember`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId }),
+                });
+                const data = await response.json();
+                setIsMember(data.isMember);
+            } catch (error) {
+                console.error('Error checking membership status:', error);
+            }
+        };
+
+        if (user) {
+            checkMembership();
+        }
+    }, [user, id]);
 
     const handleJoinGroup = async () => {
         try {
@@ -90,7 +114,7 @@ export function GroupCard({ id, name, members = 0, description, category, pictur
                 <CardContent className="flex flex-col justify-between flex-1">
                     <CardDescription className="line-clamp-2 mb-4">{description}</CardDescription>
                     {user && (
-                        isOwner ? (
+                        isOwner || isMember ? (
                             <Button className="w-full mt-auto" variant="secondary">
                                 View Group
                             </Button>
