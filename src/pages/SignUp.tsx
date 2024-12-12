@@ -5,6 +5,8 @@ import AuthInput from "@/components/common/auth/AuthInput";
 import AuthButton from "@/components/common/auth/AuthButton";
 import { UserPlus } from "lucide-react";
 import { User } from "@/types";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState("");
@@ -23,8 +25,8 @@ const SignUp: React.FC = () => {
 
     try {
       const res: User = await auth?.signUp({ name, email, password });
-      console.log("Response after SignUp", res);
-      alert("Sign up successful!, Created User with email: " + res.email);
+      toast.success("Sign up successful!", { autoClose: 2000 });
+
       navigate("/login");
     } catch (err) {
       console.log("Error in SignUp", err);
@@ -96,83 +98,3 @@ const SignUp: React.FC = () => {
 };
 
 export default SignUp;
-
-// import React from "react";
-// import { useForm, SubmitHandler } from "react-hook-form";
-// import { useAuth } from "@/hooks/useAuth";
-
-// interface SignUpFormInputs {
-//   name: string;
-//   email: string;
-//   password: string;
-// }
-
-// const SignUp: React.FC = () => {
-//   const { signUp } = useAuth();
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm<SignUpFormInputs>();
-
-//   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
-//     try {
-//       await signUp(data);
-//       alert("Sign up successful!");
-//     } catch (error) {
-//       alert("Sign up failed!");
-//     }
-//   };
-
-//   return (
-//     <form
-//       onSubmit={handleSubmit(onSubmit)}
-//       className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md"
-//     >
-//       <div className="mb-4">
-//         <input
-//           type="text"
-//           placeholder="Name"
-//           {...register("name", { required: "Name is required" })}
-//           className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-//         />
-//         {errors.name && (
-//           <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-//         )}
-//       </div>
-
-//       <div className="mb-4">
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           {...register("email", { required: "Email is required" })}
-//           className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-//         />
-//         {errors.email && (
-//           <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-//         )}
-//       </div>
-
-//       <div className="mb-4">
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           {...register("password", { required: "Password is required" })}
-//           className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-//         />
-//         {errors.password && (
-//           <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-//         )}
-//       </div>
-
-//       <button
-//         type="submit"
-//         className="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600"
-//       >
-//         Sign Up
-//       </button>
-//     </form>
-//   );
-// };
-
-// export default SignUp;

@@ -23,7 +23,6 @@ interface Movie {
 }
 
 function MovieRow({ title, movies }: { title: string; movies: Movie[] }) {
-  // Slice movies to show only the first 6
   const displayedMovies = movies.slice(0, 6);
 
   return (
@@ -31,8 +30,7 @@ function MovieRow({ title, movies }: { title: string; movies: Movie[] }) {
       <div className="max-w-7xl mx-auto px-4">
         <h3 className="text-xl font-semibold mb-4">{title}</h3>
         <ScrollArea>
-          {/* Grid layout */}
-          <div className="grid grid-cols-4 md:grid-cols-6 gap-4 pb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pb-4">
             {displayedMovies.map((movie) => (
               <Link to={`/movie/${movie.id}`} key={movie.id}>
                 <Card

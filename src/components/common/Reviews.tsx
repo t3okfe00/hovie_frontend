@@ -15,18 +15,20 @@ const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
   const [totalPages, setTotalPages] = useState(1); // Total pages state
   const [reviews, setReviews] = useState<Review[]>([]); // Reviews state
   const [isReviewsLoading, setIsReviewsLoading] = useState(false); // Reviews loading state
+  const [isError, setIsError] = useState(false); // Error state
 
   useEffect(() => {
     const getReviews = async () => {
       setIsReviewsLoading(true); // Set loading to true
       try {
         const data = await fetchReviews(String(movieId), page, 5); // Fetch reviews with pagination
-        console.log("Fetching reviews for page", page);
-        console.log("Reviews data", data);
+
         setReviews(data.reviews);
         setTotalPages(data.totalPages); // Set total pages
         setIsReviewsLoading(false); // Set loading to false
       } catch (error) {
+        setIsReviewsLoading(false); // Set loading to false
+        setIsError(true); // Set error to true
         console.error("Error fetching reviews:", error);
       }
     };
@@ -37,7 +39,6 @@ const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
   const handleDeleteReview = async (reviewId: number) => {
     try {
       const deleted = await deleteReviews(reviewId); // Delete review
-      console.log("DELETED", deleted);
       setReviews((prevReviews: Review[]) =>
         prevReviews.filter((review) => review.id !== reviewId)
       ); // Remove the review from the list
@@ -55,15 +56,12 @@ const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
 
     try {
       const data = await submitReview(movieId, comment, rating);
-      console.log("CREATED REVUEW", data);
       const newReview = data.result[0];
       setReviews((prevReviews: Review[]) => {
         const updatedReviews = [newReview, ...prevReviews]; // Add the new review to the front
         return updatedReviews.slice(0, 3); // Ensure that only the latest 3 reviews are kept
       });
-      console.log("NEDW REVIEW", newReview);
 
-      console.log("Review submitted", data);
       setPage(1); // Reset page to 1
     } catch (error) {
       console.error("Failed to submit review", error);
@@ -78,6 +76,7 @@ const Reviews: React.FC<ReviewsProps> = ({ movieId }) => {
       <h2 className="text-lg font-semibold sm:text-xl">Reviews</h2>
 
       {/* Reviews List */}
+      {isError && <p>Failed to load reviews</p>}
       <div className="space-y-4">
         {isReviewsLoading ? (
           <p>Loading reviews...</p>

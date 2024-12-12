@@ -35,3 +35,21 @@ export const fetchFavorites = async (page: number) => {
 
   return apiClient(endpoint, { method });
 };
+
+// In services/favorites.ts
+export const fetchUserProfile = async (userId: number, page: number) => {
+  const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+  const endpoint = `${BASE_URL}/favorites/shared/${userId}`;
+  const method = "GET";
+
+  return apiClient(endpoint, { method });
+};
+
+// export const fetchFavorites = async (page: number, userId?: number) => {
+//   const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+//   let endpoint = `${BASE_URL}/favorites?limit=5&page=${page}`;
+
+//   const method = "GET";
+
+//   return apiClient(endpoint, { method });
+// };

@@ -4,7 +4,7 @@ import { ProfileHeader } from "../components/ProfileHeader";
 import { FavoritesList } from "../components/FavoritesList";
 import ReactPaginate from "react-paginate";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchFavorites, deleteFavorite } from "@/services/favorites";
+import { deleteFavorite, fetchUserProfile } from "@/services/favorites";
 import { Favorite } from "@/types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
@@ -18,16 +18,17 @@ export function ProfilePage() {
 
   const [page, setPage] = useState(1);
 
-  const isOwner = !userId; // If no userId in URL, we're viewing our own profile
   const { user, isLoading } = useAuth();
+  const isOwner = userId == user?.id;
 
   useEffect(() => {
+    console.log("Fetch user profile", userId);
     const getFavorites = async () => {
       // Only fetch favorites if user is defined
       if (user) {
         try {
           setFavoritesLoading(true);
-          const response = await fetchFavorites(page);
+          const response = await fetchUserProfile(Number(userId), page);
           const favoriteMovies: Favorite[] = response.favorites;
 
           setFavorites(favoriteMovies);
@@ -43,7 +44,7 @@ export function ProfilePage() {
     };
 
     getFavorites();
-  }, [page, user]);
+  }, [page, user, userId]);
 
   const handleShare = () => {
     const url = window.location.href;

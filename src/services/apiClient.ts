@@ -21,14 +21,20 @@ const apiClient = async (url: string, options: RequestInit) => {
       responseBody.error || "Network response was not ok"
     );
     if (responseBody.error == "Unauthorized") {
-      toast.error("You need to be signed in to leave a review!");
+      toast.error("You need to be signed in to leave a review!", {
+        autoClose: 2000,
+        progressStyle: { background: "#FFA500" },
+      });
     }
 
     toast.error(responseBody.error);
     (error as any).status = response.status; // Attach HTTP status code
     throw error;
   }
-  toast.success(responseBody.message);
+  toast.success(responseBody.message, {
+    autoClose: 2000,
+    progressStyle: { background: "#FFA500" },
+  });
 
   return responseBody;
 };

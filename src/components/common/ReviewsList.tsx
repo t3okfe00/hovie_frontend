@@ -11,7 +11,6 @@ const ReviewsList = ({
   handleDeleteReview: (id: number) => void;
 }) => {
   const { user } = useAuth();
-  console.log("user id", user);
   return (
     <div>
       {reviews?.length === 0 && (
@@ -20,19 +19,10 @@ const ReviewsList = ({
         </div>
       )}
       {reviews?.map((review: Review) => (
-        <Card key={review.id} className="border-0 bg-gray-900">
+        <Card key={review.id} className="border-0 bg-gray-900 my-4">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                {/* Uncomment this if you want to use the avatar */}
-                {/* <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-800 sm:h-12 sm:w-12">
-              <img
-                src="/placeholder.svg"
-                alt="User Avatar"
-                className="h-full w-full object-cover"
-              />
-            </div> */}
-
                 <div>
                   <div className="font-medium">{review.userName}</div>
                   <div className="text-sm text-gray-400">

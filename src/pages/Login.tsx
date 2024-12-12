@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import AuthInput from "@/components/common/auth/AuthInput";
 import AuthButton from "@/components/common/auth/AuthButton";
 import { LogIn } from "lucide-react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -21,6 +23,8 @@ const Login: React.FC = () => {
 
     try {
       await auth?.login({ email, password });
+      toast.success("Login successful!", { autoClose: 2000 });
+
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to login");

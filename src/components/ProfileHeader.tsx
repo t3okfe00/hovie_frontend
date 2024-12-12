@@ -9,8 +9,7 @@ interface ProfileHeaderProps {
   isOwner: boolean;
 }
 
-export function ProfileHeader({ user }: ProfileHeaderProps) {
-  console.log("User in PROFILE HEADER", user);
+export function ProfileHeader({ user, isOwner }: ProfileHeaderProps) {
   const { deleteAcc } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -38,11 +37,17 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="sm:hidden md:block mt-6 min-w-0 flex-1">
               <h1 className="text-2xl font-bold text-gray-900 truncate mt-16">
-                {user?.name || "User!"}'s Collection
+                {isOwner ? (
+                  <h1>{user?.name}'s Collection</h1>
+                ) : (
+                  <h1>Shared Collection</h1>
+                )}
               </h1>
-              <Button variant="destructive" onClick={openModal}>
-                Delete Account
-              </Button>
+              {isOwner && (
+                <Button variant="destructive" onClick={openModal}>
+                  Delete Account
+                </Button>
+              )}
             </div>
           </div>
           <ConfirmationModal

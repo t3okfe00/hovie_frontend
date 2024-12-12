@@ -3,7 +3,7 @@ import { Favorite } from "@/types";
 import { Link } from "react-router-dom";
 interface FavoritesListProps {
   favorites: Favorite[];
-  isOwner: boolean;
+  isOwner: boolean | null;
   onRemove?: (id: number) => void;
   onShare?: () => void;
 }
