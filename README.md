@@ -1,6 +1,6 @@
 # Hovie - Stream Your Next Adventure
 
-## Movies at Your Fingertips
+## Movies at Your Fingertips *Project Live (https://awapgroup3front.onrender.com/) - Since its deployed on a free service, it will take around 50 seconds to spin up the backend)
 
 Hovie is a web platform for movie enthusiasts, offering movie searches, reviews, showtimes, and group discussions using TMDB and FINNKINO APIs. Users can manage favorites, write reviews, and connect with friends through a modern, interactive interface.
 
